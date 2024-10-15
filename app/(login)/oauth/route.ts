@@ -8,11 +8,13 @@ export async function GET(request: NextRequest) {
 
   const { account } = await createAdminClient();
   const session = await account.createSession(userId!, secret!);
-  cookies().set(process.env.NEXT_SESSION_COOKIE!, session.secret, {
+  // needs to be awaited otherwise not working
+  (await cookies()).set(process.env.NEXT_SESSION_COOKIE!, session.secret, {
     path: "/",
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: "lax",
     secure: true,
   });
-  return NextResponse.redirect(`${request.nextUrl.origin}/dashboard`);
+  const response = NextResponse.redirect(`${request.nextUrl.origin}/dashboard`);
+  return response
 }

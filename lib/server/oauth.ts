@@ -45,10 +45,11 @@ export async function signUpWithGoogle() {
     successURL,
     failureURL
   );
-
   return redirect(redirectUrl as string);
 }
 
 export async function signOut() {
+  const {account} = await createSessionClient()
+  await account.deleteSessions()
   cookies().delete(process.env.NEXT_SESSION_COOKIE!);
 }
