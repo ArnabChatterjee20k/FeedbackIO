@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { signOut } from "@/lib/server/oauth";
 import { getUser } from "@/lib/server/utils";
-import { redirect } from "next/navigation";
-import Signout from "./Signout";
 import Banner from "./components/banner";
+import Card from "@/components/card";
+import { getSpaces } from "@/lib/server/db/spaces";
+import Empty from "../../../components/empty";
+import { PlusIcon } from "lucide-react";
+import Link from "next/link";
 
 export default async function page() {
   const user = await getUser();
+  const userId = user?.$id as string;
+  const spaces = await getSpaces(userId);
 
   return (
     <div>
@@ -14,7 +18,35 @@ export default async function page() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
           <Banner />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"></div>
+      </section>
+      <section className="py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-start">
+          <div className="flex justify-between w-full items-center">
+            <h2 className="text-4xl font-extrabold">Spaces</h2>
+            <Link href="/dashboard/space?mode=new">
+              <Button className="flex gap-1 items-center">
+                <PlusIcon size={18} />
+                Create a new space
+              </Button>
+            </Link>
+          </div>
+          <div className="mt-4 grid-cols-3 md:grid md:gap-4 mx-auto">
+            {spaces?.length ? (
+              spaces.map((space) => (
+                <Card
+                  key={space.$id}
+                  name={space.name}
+                  feedbacks={12}
+                  sentiment="POSITIVE"
+                />
+              ))
+            ) : (
+              <div className="col-span-3 mx-auto mt-7">
+                <Empty text="No spaces yet" />
+              </div>
+            )}
+          </div>
+        </div>
       </section>
     </div>
   );
