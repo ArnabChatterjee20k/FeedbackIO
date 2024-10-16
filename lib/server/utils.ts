@@ -1,4 +1,4 @@
-import { createSessionClient } from "./oauth";
+import { createSessionClient } from "./appwrite";
 export async function getUser() {
   try {
     const { account } = await createSessionClient();

@@ -1,7 +1,7 @@
 "use server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Client, Account, OAuthProvider} from "node-appwrite";
+import { Client, Account, OAuthProvider,Databases} from "node-appwrite";
 
 export async function createSessionClient() {
   const client = new Client()
@@ -19,6 +19,9 @@ export async function createSessionClient() {
     get account() {
       return new Account(client);
     },
+    get db(){
+      return new Databases(client)
+    }
   };
 }
 

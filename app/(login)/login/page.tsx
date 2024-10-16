@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { signUpWithGoogle } from "@/lib/server/oauth";
+import { signUpWithGoogle } from "@/lib/server/appwrite";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
