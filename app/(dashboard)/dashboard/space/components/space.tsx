@@ -10,6 +10,7 @@ import LandingPage from "@/components/landing-page";
 import { SpaceFormType } from "../schema";
 import LandingPageForm from "./landing-page-form";
 import SettingsForm from "./settings-form";
+import ThankYouForm from "./thankyou-form";
 
 interface Props {
   mode: "edit" | "new";
@@ -39,7 +40,7 @@ export default function Space({ mode, data }: Props) {
         spaceDetails={{ ...spaceState.landingPageSchema }}
       />
     ),
-    ThankYou: <ThankYouPage />,
+    ThankYou: <ThankYouPage {...spaceState.thankYouPageSchema}/>,
     Notifications: (
       <FeedbackForm
         {...spaceState.settingsSchema}
@@ -51,7 +52,7 @@ export default function Space({ mode, data }: Props) {
   const forms: Record<TabName, React.ReactNode> = {
     LandingPage: <LandingPageForm />,
     Settings: <SettingsForm />,
-    ThankYou: <SettingsForm />,
+    ThankYou: <ThankYouForm />,
     Notifications: <SettingsForm />,
   };
 

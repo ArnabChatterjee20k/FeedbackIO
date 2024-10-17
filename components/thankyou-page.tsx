@@ -1,8 +1,11 @@
 // pages/index.js
+import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
 import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 
-export default function ThankYouPage() {
+type ThankYouPageProps = SpaceFormType["thankYouPageSchema"];
+
+export default function ThankYouPage({ message, title }: ThankYouPageProps) {
   const [runConfetti, setRunConfetti] = useState(true);
   const [numberOfPieces, setNumberOfPieces] = useState(600); // Start with 600 pieces of confetti
   const [dimensions, setDimensions] = useState({
@@ -60,11 +63,9 @@ export default function ThankYouPage() {
       )}
       <div className="text-center">
         <h1 className="text-6xl md:text-8xl font-bold text-gray-800 mb-4">
-          Thank You!
+          {title}
         </h1>
-        <p className="text-xl md:text-2xl text-gray-600">
-          We appreciate your feedback!
-        </p>
+        <p className="text-xl md:text-2xl text-gray-600">{message}</p>
         <div className="mt-8 flex justify-center">
           <div className="h-1 w-32 bg-gray-300 rounded-full"></div>
         </div>
