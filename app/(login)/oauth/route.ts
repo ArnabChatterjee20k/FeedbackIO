@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
     httpOnly: true,
     sameSite: "lax",
     secure: true,
+    maxAge: 365 * 24 * 60 * 60 * 1000, // 1 day in milliseconds
   });
   const response = NextResponse.redirect(`${request.nextUrl.origin}/dashboard`);
-  return response
+  return response;
 }
