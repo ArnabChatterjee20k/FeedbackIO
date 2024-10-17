@@ -58,8 +58,7 @@ export default function LandingPage({
         {/* Feedback Button */}
         <div className="flex flex-col items-center justify-center mt-8 gap-2">
           <Dialog>
-            <DialogTrigger>
-              <>
+            <DialogTrigger asChild >
                 <Button
                   variant="default"
                   size="lg"
@@ -67,9 +66,8 @@ export default function LandingPage({
                 >
                   Share your valuable feedback
                 </Button>
-                <Branding />
-              </>
             </DialogTrigger>
+            <Branding />
             <DialogContent className="bg-transparent border-none">
               <FeedbackForm />
             </DialogContent>
