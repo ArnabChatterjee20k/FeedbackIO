@@ -19,7 +19,7 @@ const landingPageSchema = z
       .default("Space name"),
     message: z
       .string()
-      .min(0, "Space message is required")
+      .min(1, "Space message is required")
       .max(1000, "Within 1000 characters")
       .default(
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed tempora quia animi magnam earum ipsam voluptatem eveniet quibusdam molestiae ut numquam aliquam, beatae iure quam eum laudantium corrupti, qui minima!"
@@ -27,7 +27,7 @@ const landingPageSchema = z
     primaryColor: z.string().default("#000000"),
     questionSection: z.boolean().default(true),
     questions: questionSchema,
-    buttonText: z.string().default("Share your valuable feedback"),
+    buttonText: z.string().min(1,"button text is required").max(20,"Max characters reached").default("Share your valuable feedback"),
   })
   .superRefine((data, ctx) => {
     if (data.questionSection === true && !data.questions) {
