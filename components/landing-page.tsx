@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import Branding from "./branding";
 
 interface LandingSectionProps {
   name: string;
@@ -59,7 +60,7 @@ export default function LandingPage({
           <Button variant="default" size="lg" className=" w-full max-w-sm">
             Share your valuable feedback
           </Button>
-          <span className="text-sm">Powered by <Link href={process.env.NEXT_SITE_URL! || ""} className="font-bold text-orange-600 underline">FeedbackSo</Link></span>
+          <Branding />
         </div>
       </section>
     </div>

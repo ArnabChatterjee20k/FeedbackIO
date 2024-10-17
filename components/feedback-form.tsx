@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import Branding from "./branding";
 
 export default function FeedbackForm() {
   const [name, setName] = useState("");
@@ -96,6 +97,9 @@ export default function FeedbackForm() {
           </Button>
         </form>
       </CardContent>
+      <div className="flex justify-center items-center mb-3 -mt-3">
+        <Branding/>
+      </div>
     </Card>
   );
 }
