@@ -9,18 +9,14 @@ import { Controller } from "react-hook-form";
 import LandingPage from "@/components/landing-page";
 import { SpaceFormType } from "../schema";
 import LandingPageForm from "./landing-page-form";
+import SettingsForm from "./settings-form";
 
 interface Props {
   mode: "edit" | "new";
   data?: Record<string, string>;
 }
 
-type TabName =
-  | "LandingPage"
-  | "Feedback"
-  | "ThankYou"
-  | "Settings"
-  | "Notifications";
+type TabName = "LandingPage" | "ThankYou" | "Settings" | "Notifications";
 
 export default function Space({ mode, data }: Props) {
   const {
@@ -35,6 +31,13 @@ export default function Space({ mode, data }: Props) {
     Settings: <FeedbackForm />,
     ThankYou: <ThankYouPage />,
     Notifications: <FeedbackForm />,
+  };
+
+  const forms: Record<TabName, React.ReactNode> = {
+    LandingPage: <LandingPageForm />,
+    Settings: <SettingsForm />,
+    ThankYou: <SettingsForm />,
+    Notifications: <SettingsForm />,
   };
 
   const onSubmit = (data: any) => {
@@ -70,9 +73,7 @@ export default function Space({ mode, data }: Props) {
             {(Object.entries(tabContent) as [TabName, React.ReactNode][]).map(
               ([tab, content]) => (
                 <TabsContent key={tab} value={tab}>
-                  <Card className="p-4 rounded-sm shadow-sm">
-                    <LandingPageForm/>
-                  </Card>
+                  <Card className="p-4 rounded-sm shadow-sm">{forms[tab]}</Card>
                 </TabsContent>
               )
             )}

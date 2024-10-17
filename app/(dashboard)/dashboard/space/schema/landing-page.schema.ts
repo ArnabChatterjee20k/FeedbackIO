@@ -20,7 +20,7 @@ const landingPageSchema = z
     message: z
       .string()
       .min(0, "Space message is required")
-      .max(100, "Within 100 characters")
+      .max(1000, "Within 1000 characters")
       .default(
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed tempora quia animi magnam earum ipsam voluptatem eveniet quibusdam molestiae ut numquam aliquam, beatae iure quam eum laudantium corrupti, qui minima!"
       ),

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  useForm,
   Controller,
   useFieldArray,
   Path,
@@ -33,13 +32,12 @@ export type FieldConfig = {
 
 type FormBuilderProps = {
   config: FieldConfig[];
-  onSubmit: (data: any) => void;
   page: keyof SpaceFormType;
 };
 
 export default function FormBuilder({ config, page }: FormBuilderProps) {
   const {
-    methods: { control },
+    methods: { control, setValue },
     spaceState,
     setSpaceState,
   } = useProjectContext();
@@ -110,7 +108,7 @@ export default function FormBuilder({ config, page }: FormBuilderProps) {
             control={control}
             name={field.path}
             render={({
-              field: { onChange, value, name, ref },
+              field: { name, value, ref },
               fieldState: { invalid, error },
             }) => (
               <div className="flex items-center space-x-2 mb-4">
@@ -120,14 +118,16 @@ export default function FormBuilder({ config, page }: FormBuilderProps) {
                   ref={ref}
                   checked={value as boolean}
                   onCheckedChange={(checked) => {
-                    setSpaceState((prev) => ({
-                      ...prev,
-                      [page]: {
-                        ...prev[page],
-                        [name.split(".")[1]]: checked,
-                      },
-                    }));
-                    onChange(checked);
+                    setValue(name, checked);
+                    setSpaceState((prev) => {
+                      return {
+                        ...prev,
+                        [page]: {
+                          ...prev[page],
+                          [name.split(".")[1]]: checked,
+                        },
+                      };
+                    });
                   }}
                 />
                 <Label htmlFor={name}>{field.label}</Label>
@@ -209,9 +209,6 @@ export default function FormBuilder({ config, page }: FormBuilderProps) {
       {config.map((field) => (
         <React.Fragment key={field.path}>{renderField(field)}</React.Fragment>
       ))}
-      <Button type="submit" className="w-full">
-        Submit
-      </Button>
     </div>
   );
 }
