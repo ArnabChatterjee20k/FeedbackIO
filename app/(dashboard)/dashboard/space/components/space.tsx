@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import FeedbackForm from "../../../../../components/feedback-form";
-import LandingPage from "../../../../../components/landing-page";
 import ThankYouPage from "../../../../../components/thankyou-page";
 import { Button } from "@/components/ui/button";
+import { useProjectContext } from "../context/ProjectContextProvider";
+import { Controller } from "react-hook-form";
+import LandingPage from "@/components/landing-page";
+import { SpaceFormType } from "../schema";
 
 interface Props {
   mode: "edit" | "new";
@@ -19,23 +22,35 @@ type TabName =
   | "Notifications";
 
 export default function Space({ mode, data }: Props) {
+  const {
+    methods: { register, handleSubmit, watch, formState, control },
+    spaceState,
+    setSpaceState,
+  } = useProjectContext();
   const [activeTab, setActiveTab] = useState<TabName>("LandingPage");
 
   const tabContent: Record<TabName, React.ReactNode> = {
-    LandingPage: <LandingPage />,
+    LandingPage: <LandingPage {...spaceState.landingPageSchema} />,
     Settings: <FeedbackForm />,
     ThankYou: <ThankYouPage />,
     Notifications: <FeedbackForm />,
   };
 
+  const onSubmit = (data: any) => {
+    console.log("Form Submitted:", data);
+  };
+
   return (
-    <div className="overflow-x-hidden flex flex-col md:flex-row gap-8 p-5 justify-between max-w-[1800px] mx-auto w-full">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="overflow-x-hidden flex flex-col md:flex-row gap-8 p-5 justify-between max-w-[1800px] mx-auto w-full"
+    >
       <div className="w-full md:w-1/3">
         <div className="p-4 shadow-sm aspect-[3/4] overflow-scroll md:overflow-hidden">
           {tabContent[activeTab]}
         </div>
       </div>
-      {/* forms */}
+
       <div className="w-full max-w-5xl">
         <Tabs
           value={activeTab}
@@ -49,6 +64,7 @@ export default function Space({ mode, data }: Props) {
               </TabsTrigger>
             ))}
           </TabsList>
+
           <div className="mt-4">
             {(Object.entries(tabContent) as [TabName, React.ReactNode][]).map(
               ([tab, content]) => (
@@ -57,16 +73,55 @@ export default function Space({ mode, data }: Props) {
                     <h2 className="text-lg font-semibold mb-2">
                       {tab} Settings
                     </h2>
-                    {/* Add form controls or settings for each tab here */}
-                    <p>Configure your {tab} settings here.</p>
+                    {/* Input fields */}
+                    <Controller
+                      control={control}
+                      name="landingPageSchema.message"
+                      render={({
+                        field: { onChange, onBlur, value, name, ref },
+                        fieldState: { invalid, error },
+                      }) => (
+                        <div>
+                          <input
+                            name={name} // Assign the name to the input
+                            ref={ref} // Register the ref for React Hook Form
+                            onBlur={onBlur} // notify when input is touched
+                            onChange={(e) => {
+                              // Update state before sending value to hook form
+                              setSpaceState((prev: SpaceFormType) => {
+                                const newSpace = {
+                                  ...prev,
+                                  landingPageSchema: {
+                                    ...prev.landingPageSchema,
+                                    [name.split(".")[1]]: e.target.value,
+                                  },
+                                }
+                                console.log({"message":value})
+                                return newSpace
+                              });
+                              onChange(e);
+                            }}
+                            value={value} // controlled input value
+                          />
+                          {invalid && error && <p>{error.message}</p>}{" "}
+                          {/* Display error message */}
+                        </div>
+                      )}
+                    />
                   </Card>
                 </TabsContent>
               )
             )}
           </div>
         </Tabs>
-        <Button className="my-2 rounded-sm w-full md:w-auto md:ml-[50%] md:mr-[50%]">Create Space</Button>
+
+        <Button
+          type="submit"
+          className="my-2 rounded-sm w-full md:w-auto md:ml-[50%] md:mr-[50%]"
+        >
+          Create Space
+        </Button>
       </div>
-    </div>
+    </form>
   );
 }
