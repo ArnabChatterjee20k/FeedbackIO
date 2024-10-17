@@ -66,7 +66,7 @@ export default function Space({ mode, data }: Props) {
             )}
           </div>
         </Tabs>
-        <Button className="my-2 w-full md:w-auto md:ml-[50%] md:mr-[50%]">Save Space</Button>
+        <Button className="my-2 rounded-sm w-full md:w-auto md:ml-[50%] md:mr-[50%]">Create Space</Button>
       </div>
     </div>
   );

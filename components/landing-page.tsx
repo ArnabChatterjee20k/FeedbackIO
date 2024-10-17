@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
 import Branding from "./branding";
-
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import FeedbackForm from "./feedback-form";
 interface LandingSectionProps {
   name: string;
   tagline: string;
@@ -57,10 +57,23 @@ export default function LandingPage({
 
         {/* Feedback Button */}
         <div className="flex flex-col items-center justify-center mt-8 gap-2">
-          <Button variant="default" size="lg" className=" w-full max-w-sm">
-            Share your valuable feedback
-          </Button>
-          <Branding />
+          <Dialog>
+            <DialogTrigger>
+              <>
+                <Button
+                  variant="default"
+                  size="lg"
+                  className=" w-full max-w-sm"
+                >
+                  Share your valuable feedback
+                </Button>
+                <Branding />
+              </>
+            </DialogTrigger>
+            <DialogContent className="bg-transparent border-none">
+              <FeedbackForm />
+            </DialogContent>
+          </Dialog>
         </div>
       </section>
     </div>
