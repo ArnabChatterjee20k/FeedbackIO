@@ -8,6 +8,7 @@ import { useProjectContext } from "../context/ProjectContextProvider";
 import { Controller } from "react-hook-form";
 import LandingPage from "@/components/landing-page";
 import { SpaceFormType } from "../schema";
+import LandingPageForm from "./landing-page-form";
 
 interface Props {
   mode: "edit" | "new";
@@ -70,44 +71,7 @@ export default function Space({ mode, data }: Props) {
               ([tab, content]) => (
                 <TabsContent key={tab} value={tab}>
                   <Card className="p-4 rounded-sm shadow-sm">
-                    <h2 className="text-lg font-semibold mb-2">
-                      {tab} Settings
-                    </h2>
-                    {/* Input fields */}
-                    <Controller
-                      control={control}
-                      name="landingPageSchema.message"
-                      render={({
-                        field: { onChange, onBlur, value, name, ref },
-                        fieldState: { invalid, error },
-                      }) => (
-                        <div>
-                          <input
-                            name={name} // Assign the name to the input
-                            ref={ref} // Register the ref for React Hook Form
-                            onBlur={onBlur} // notify when input is touched
-                            onChange={(e) => {
-                              // Update state before sending value to hook form
-                              setSpaceState((prev: SpaceFormType) => {
-                                const newSpace = {
-                                  ...prev,
-                                  landingPageSchema: {
-                                    ...prev.landingPageSchema,
-                                    [name.split(".")[1]]: e.target.value,
-                                  },
-                                }
-                                console.log({"message":value})
-                                return newSpace
-                              });
-                              onChange(e);
-                            }}
-                            value={value} // controlled input value
-                          />
-                          {invalid && error && <p>{error.message}</p>}{" "}
-                          {/* Display error message */}
-                        </div>
-                      )}
-                    />
+                    <LandingPageForm/>
                   </Card>
                 </TabsContent>
               )
