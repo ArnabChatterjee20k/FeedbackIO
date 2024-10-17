@@ -23,27 +23,26 @@ export default function Space({ mode, data }: Props) {
 
   const tabContent: Record<TabName, React.ReactNode> = {
     LandingPage: <LandingPage />,
-    Feedback: <FeedbackForm />,
-    ThankYou: <ThankYouPage />,
     Settings: <FeedbackForm />,
+    ThankYou: <ThankYouPage />,
     Notifications: <FeedbackForm />,
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 p-5 justify-between max-w-[1800px] mx-auto w-full">
+    <div className="overflow-x-hidden flex flex-col md:flex-row gap-8 p-5 justify-between max-w-[1800px] mx-auto w-full">
       <div className="w-full md:w-1/3">
-        <div className="p-4 shadow-sm aspect-[9/16] overflow-hidden">
+        <div className="p-4 shadow-sm aspect-[3/4] overflow-scroll md:overflow-hidden">
           {tabContent[activeTab]}
         </div>
       </div>
       {/* forms */}
-      <div className="w-full">
+      <div className="w-full max-w-5xl">
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as TabName)}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             {(Object.keys(tabContent) as TabName[]).map((tab) => (
               <TabsTrigger key={tab} value={tab}>
                 {tab}
