@@ -3,11 +3,36 @@ import FormBuilder, { FieldConfig } from "./form-builder";
 
 export default function LandingPageForm() {
   const formConfig: FieldConfig[] = [
-    { name: "name", label: "Full Name", type: "text" },
-    { name: "email", label: "Email Address", type: "text" },
-    { name: "bio", label: "Biography", type: "longText" },
-    { name: "newsletter", label: "Subscribe to newsletter", type: "toggle" },
-    { name: "avatar", label: "Profile Picture", type: "avatar" },
+    {
+      name: "name",
+      label: "Space Name",
+      type: "text",
+      path: "landingPageSchema.name",
+    },
+    {
+      name: "message",
+      label: "Space Message",
+      type: "longText",
+      path: "landingPageSchema.message",
+    },
+    {
+      name: "logo",
+      label: "Space Logo",
+      type: "avatar",
+      path: "landingPageSchema.logo",
+    },
+    {
+      name: "primaryColor",
+      label: "Primary Color",
+      type: "text",
+      path: "landingPageSchema.primaryColor",
+    },
+    {
+      name: "questionSection",
+      label: "Include Questions",
+      type: "toggle",
+      path: "landingPageSchema.questionSection",
+    },
     {
       name: "questions",
       label: "Survey Questions",
@@ -16,12 +41,19 @@ export default function LandingPageForm() {
         maxItems: 5,
         itemLabel: "Question",
       },
+      path: "landingPageSchema.questions",
+    },
+    {
+      name: "buttonText",
+      label: "Button Text",
+      type: "text",
+      path: "landingPageSchema.buttonText",
     },
   ];
-
-  const handleSubmit = (data: any) => {
-    console.log("Form data:", data);
-  };
-
-  return <FormBuilder config={formConfig} onSubmit={handleSubmit} />;
+  return (
+    <FormBuilder
+      page="landingPageSchema"
+      config={formConfig}
+    />
+  );
 }

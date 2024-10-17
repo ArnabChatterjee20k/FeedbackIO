@@ -27,10 +27,25 @@ export default function Space({ mode, data }: Props) {
   const [activeTab, setActiveTab] = useState<TabName>("LandingPage");
 
   const tabContent: Record<TabName, React.ReactNode> = {
-    LandingPage: <LandingPage {...spaceState.landingPageSchema} />,
-    Settings: <FeedbackForm />,
+    LandingPage: (
+      <LandingPage
+        {...spaceState.landingPageSchema}
+        feedbackFormProps={{ ...spaceState.settingsSchema }}
+      />
+    ),
+    Settings: (
+      <FeedbackForm
+        {...spaceState.settingsSchema}
+        spaceDetails={{ ...spaceState.landingPageSchema }}
+      />
+    ),
     ThankYou: <ThankYouPage />,
-    Notifications: <FeedbackForm />,
+    Notifications: (
+      <FeedbackForm
+        {...spaceState.settingsSchema}
+        spaceDetails={{ ...spaceState.landingPageSchema }}
+      />
+    ),
   };
 
   const forms: Record<TabName, React.ReactNode> = {

@@ -4,8 +4,11 @@ import Branding from "./branding";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import FeedbackForm from "./feedback-form";
 import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
-import { log } from "console";
-type LandingSectionProps = SpaceFormType["landingPageSchema"];
+
+type FeedbackFormProps = SpaceFormType["settingsSchema"];
+type LandingSectionProps = SpaceFormType["landingPageSchema"] & {
+  feedbackFormProps: FeedbackFormProps;
+};
 
 export default function LandingPage({
   name,
@@ -15,6 +18,7 @@ export default function LandingPage({
   questionSection,
   primaryColor,
   buttonText,
+  feedbackFormProps,
 }: LandingSectionProps) {
   return (
     <div className="min-h-screen w-full flex flex-col items-center p-6 bg-white">
@@ -65,7 +69,10 @@ export default function LandingPage({
             </DialogTrigger>
             <Branding />
             <DialogContent className="bg-transparent border-none">
-              <FeedbackForm />
+              <FeedbackForm
+                {...feedbackFormProps}
+                spaceDetails={{ logo, name, message }}
+              />
             </DialogContent>
           </Dialog>
         </div>

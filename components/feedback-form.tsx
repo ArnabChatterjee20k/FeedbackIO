@@ -15,8 +15,21 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Branding from "./branding";
-
-export default function FeedbackForm() {
+import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
+type DetailsProps = Pick<
+  SpaceFormType["landingPageSchema"],
+  "name" | "logo" | "message"
+>;
+type FeedbackFormProps = SpaceFormType["settingsSchema"] & {
+  spaceDetails: DetailsProps;
+};
+export default function FeedbackForm({
+  authEnabledReview,
+  ipEnabledReview,
+  nameRequired,
+  starRatingRequired,
+  spaceDetails,
+}: FeedbackFormProps) {
   const [name, setName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(1);
@@ -30,33 +43,38 @@ export default function FeedbackForm() {
     setFeedback("");
     setRating(0);
   };
+  const { name: spaceName, logo, message } = spaceDetails;
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader className="text-center">
         <div className="w-20 h-20 mx-auto my-7">
           <Avatar className="rounded-full">
-            <AvatarImage className="rounded-full" src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage
+              className="rounded-full"
+              src={logo as string}
+              alt="@shadcn"
+            />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
-        <CardTitle className="text-3xl font-bold">Feedback Form</CardTitle>
-        <CardDescription>
-          We value your input! Please share your thoughts with us.
-        </CardDescription>
+        <CardTitle className="text-3xl font-bold">{spaceName}</CardTitle>
+        <CardDescription>{message}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              required
-            />
-          </div>
+          {nameRequired && (
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="feedback">Feedback</Label>
@@ -70,27 +88,29 @@ export default function FeedbackForm() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Rating</Label>
-            <div className="flex space-x-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star)}
-                  className="focus:outline-none"
-                >
-                  <Star
-                    className={`w-8 h-8 ${
-                      star <= rating
-                        ? "text-orange-400 fill-orange-400"
-                        : "text-gray-300"
-                    }`}
-                  />
-                </button>
-              ))}
+          {starRatingRequired && (
+            <div className="space-y-2">
+              <Label>Rating</Label>
+              <div className="flex space-x-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star)}
+                    className="focus:outline-none"
+                  >
+                    <Star
+                      className={`w-8 h-8 ${
+                        star <= rating
+                          ? "text-orange-400 fill-orange-400"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <Button type="submit" className="w-full">
             Submit Feedback
@@ -98,7 +118,7 @@ export default function FeedbackForm() {
         </form>
       </CardContent>
       <div className="flex justify-center items-center mb-3 -mt-3">
-        <Branding/>
+        <Branding />
       </div>
     </Card>
   );
