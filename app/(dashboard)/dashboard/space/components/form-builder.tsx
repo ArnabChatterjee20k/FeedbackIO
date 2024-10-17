@@ -1,57 +1,80 @@
-import React, { useState } from 'react';
-import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { PlusCircle, Trash2, GripVertical } from 'lucide-react'
+import React, { useState } from "react";
+import {
+  useForm,
+  Controller,
+  useFieldArray,
+  Path,
+  FieldValues,
+  Control,
+  ArrayPath,
+} from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Trash2, GripVertical } from "lucide-react";
+import { spaceFormSchema, SpaceFormType } from "../schema";
+import { useProjectContext } from "../context/ProjectContextProvider";
+import landingPageSchema from "../schema/landing-page.schema";
 
+export type FieldPath<TFieldValues extends FieldValues> = Path<TFieldValues>;
 export type FieldConfig = {
   name: string;
   label: string;
-  type: 'text' | 'longText' | 'toggle' | 'avatar' | 'array';
+  type: "text" | "longText" | "toggle" | "avatar" | "array";
   arrayConfig?: {
     maxItems: number;
     itemLabel: string;
   };
+  path: FieldPath<SpaceFormType>;
 };
 
 type FormBuilderProps = {
   config: FieldConfig[];
   onSubmit: (data: any) => void;
+  page: keyof SpaceFormType;
 };
 
-export default function FormBuilder({ config, onSubmit }: FormBuilderProps) {
-  const { control, handleSubmit } = useForm();
-  const [formState, setFormState] = useState<Record<string, any>>({});
+export default function FormBuilder({ config, page }: FormBuilderProps) {
+  const {
+    methods: { control },
+    spaceState,
+    setSpaceState,
+  } = useProjectContext();
 
   const renderField = (field: FieldConfig, index?: number) => {
     switch (field.type) {
-      case 'text':
-      case 'longText':
+      case "text":
+      case "longText":
         return (
           <Controller
+            name={field.path}
             control={control}
-            name={field.name}
             render={({
               field: { onChange, onBlur, value, name, ref },
               fieldState: { invalid, error },
             }) => (
               <div className="mb-4">
                 <Label htmlFor={name}>{field.label}</Label>
-                {field.type === 'longText' ? (
+                {field.type === "longText" ? (
                   <Textarea
                     id={name}
                     name={name}
                     ref={ref}
                     onBlur={onBlur}
                     onChange={(e) => {
-                      setFormState((prev) => ({ ...prev, [name]: e.target.value }));
+                      setSpaceState((prev) => ({
+                        ...prev,
+                        [page]: {
+                          ...prev[page],
+                          [name.split(".")[1]]: e.target.value,
+                        },
+                      }));
                       onChange(e);
                     }}
-                    value={value}
+                    value={value as string}
                     className="mt-1"
                   />
                 ) : (
@@ -61,23 +84,31 @@ export default function FormBuilder({ config, onSubmit }: FormBuilderProps) {
                     ref={ref}
                     onBlur={onBlur}
                     onChange={(e) => {
-                      setFormState((prev) => ({ ...prev, [name]: e.target.value }));
+                      setSpaceState((prev) => ({
+                        ...prev,
+                        [page]: {
+                          ...prev[page],
+                          [name.split(".")[1]]: e.target.value,
+                        },
+                      }));
                       onChange(e);
                     }}
-                    value={value}
+                    value={value as string}
                     className="mt-1"
                   />
                 )}
-                {invalid && error && <p className="text-red-500 text-sm mt-1">{error.message}</p>}
+                {invalid && error && (
+                  <p className="text-red-500 text-sm mt-1">{error.message}</p>
+                )}
               </div>
             )}
           />
         );
-      case 'toggle':
+      case "toggle":
         return (
           <Controller
             control={control}
-            name={field.name}
+            name={field.path}
             render={({
               field: { onChange, value, name, ref },
               fieldState: { invalid, error },
@@ -87,23 +118,31 @@ export default function FormBuilder({ config, onSubmit }: FormBuilderProps) {
                   id={name}
                   name={name}
                   ref={ref}
-                  checked={value}
+                  checked={value as boolean}
                   onCheckedChange={(checked) => {
-                    setFormState((prev) => ({ ...prev, [name]: checked }));
+                    setSpaceState((prev) => ({
+                      ...prev,
+                      [page]: {
+                        ...prev[page],
+                        [name.split(".")[1]]: checked,
+                      },
+                    }));
                     onChange(checked);
                   }}
                 />
                 <Label htmlFor={name}>{field.label}</Label>
-                {invalid && error && <p className="text-red-500 text-sm">{error.message}</p>}
+                {invalid && error && (
+                  <p className="text-red-500 text-sm">{error.message}</p>
+                )}
               </div>
             )}
           />
         );
-      case 'avatar':
+      case "avatar":
         return (
           <Controller
             control={control}
-            name={field.name}
+            name={field.path}
             render={({
               field: { onChange, value, name, ref },
               fieldState: { invalid, error },
@@ -112,7 +151,7 @@ export default function FormBuilder({ config, onSubmit }: FormBuilderProps) {
                 <Label htmlFor={name}>{field.label}</Label>
                 <div className="flex items-center space-x-4 mt-1">
                   <Avatar>
-                    <AvatarImage src={value} alt="Avatar" />
+                    <AvatarImage src={value as string} alt="Avatar" />
                     <AvatarFallback>Avatar</AvatarFallback>
                   </Avatar>
                   <Input
@@ -125,7 +164,13 @@ export default function FormBuilder({ config, onSubmit }: FormBuilderProps) {
                       if (file) {
                         const reader = new FileReader();
                         reader.onloadend = () => {
-                          setFormState((prev) => ({ ...prev, [name]: reader.result }));
+                          setSpaceState((prev) => ({
+                            ...prev,
+                            [page]: {
+                              ...prev[page],
+                              [name.split(".")[1]]: reader.result,
+                            },
+                          }));
                           onChange(reader.result);
                         };
                         reader.readAsDataURL(file);
@@ -134,21 +179,24 @@ export default function FormBuilder({ config, onSubmit }: FormBuilderProps) {
                     accept="image/*"
                   />
                 </div>
-                {invalid && error && <p className="text-red-500 text-sm mt-1">{error.message}</p>}
+                {invalid && error && (
+                  <p className="text-red-500 text-sm mt-1">{error.message}</p>
+                )}
               </div>
             )}
           />
         );
-      case 'array':
+      case "array":
         if (!field.arrayConfig) return null;
         return (
           <ArrayField
-            key={field.name}
-            name={field.name}
+            key={field.path}
+            name={field.path as never}
             label={field.label}
-            control={control}
             maxItems={field.arrayConfig.maxItems}
             itemLabel={field.arrayConfig.itemLabel}
+            page={page}
+            control={control}
           />
         );
       default:
@@ -157,30 +205,51 @@ export default function FormBuilder({ config, onSubmit }: FormBuilderProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="space-y-4">
       {config.map((field) => (
-        <React.Fragment key={field.name}>
-          {renderField(field)}
-        </React.Fragment>
+        <React.Fragment key={field.path}>{renderField(field)}</React.Fragment>
       ))}
       <Button type="submit" className="w-full">
         Submit
       </Button>
-    </form>
+    </div>
   );
 }
 
-function ArrayField({ name, label, control, maxItems, itemLabel }: {
-  name: string;
+interface ArrayFieldProps<TFieldValues extends FieldValues> {
+  name: ArrayPath<TFieldValues>;
   label: string;
-  control: any;
   maxItems: number;
   itemLabel: string;
-}) {
+  control: Control<TFieldValues>;
+  page: keyof SpaceFormType;
+}
+
+function ArrayField<TFieldValues extends FieldValues>({
+  name,
+  label,
+  maxItems,
+  itemLabel,
+  control,
+  page,
+}: ArrayFieldProps<TFieldValues>) {
+  const { setSpaceState } = useProjectContext();
+
   const { fields, append, remove } = useFieldArray({
-    control,
     name,
+    control,
   });
+
+  const handleChange = (index: number, value: string) => {
+    setSpaceState((prev) => {
+      const newState = { ...prev };
+      const fieldPath = name.split(".");
+      const pageData = newState[page] as Record<string, any>;
+      const fieldData = pageData[fieldPath[1]] as string[];
+      fieldData[index] = value;
+      return newState;
+    });
+  };
 
   return (
     <div className="space-y-2">
@@ -188,30 +257,72 @@ function ArrayField({ name, label, control, maxItems, itemLabel }: {
       {fields.map((field, index) => (
         <div key={field.id} className="flex items-center space-x-2">
           <GripVertical className="cursor-move" size={20} />
+
           <Controller
-            name={`${name}.${index}.value`}
+            // assigning name.index format so that values remain unique
+            // if only name, it will be same for all inputs and all inputs will have all the inputs
+            name={`${name}.${index}` as Path<TFieldValues>}
             control={control}
-            render={({ field }) => (
-              <Input {...field} placeholder={`${itemLabel} ${index + 1}`} />
+            render={({ field: { onChange, value } }) => (
+              <Input
+                value={value as string}
+                onChange={(e) => {
+                  onChange(e);
+                  handleChange(index, e.target.value);
+                }}
+                placeholder={`${itemLabel} ${index + 1}`}
+              />
             )}
           />
+
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => remove(index)}
+            onClick={() => {
+              setSpaceState((prev) => {
+                const newState = { ...prev };
+                const fieldPath = name.split(".");
+                const pageData = newState[page] as Record<string, any>; // eg -> landingPage
+                const fieldData = pageData[fieldPath[1]] as string[]; // eg -> questions field of landingPage
+                const prevData = fieldData.slice(0, index);
+                const nextData = fieldData.slice(index + 1);
+                const newFieldData = [...prevData, ...nextData];
+                return {
+                  ...prev,
+                  [page]: { ...prev[page], [fieldPath[1]]: newFieldData },
+                };
+              });
+              remove(index);
+            }}
           >
             <Trash2 size={20} />
           </Button>
         </div>
       ))}
+
       {fields.length < maxItems && (
         <Button
           type="button"
           variant="outline"
           size="sm"
           className="mt-2"
-          onClick={() => append({ value: '' })}
+          onClick={() => {
+            append("Next question??" as any);
+            setSpaceState((prev) => {
+              const newState = { ...prev };
+              const fieldPath = name.split(".");
+              const pageData = newState[page] as Record<string, any>;
+              const fieldData = [
+                ...(pageData[fieldPath[1]] as string[]),
+                "Next question??",
+              ];
+              return {
+                ...prev,
+                [page]: { ...prev[page], [fieldPath[1]]: fieldData },
+              };
+            });
+          }}
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Add one (up to {maxItems})
