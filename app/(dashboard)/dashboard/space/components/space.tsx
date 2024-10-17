@@ -11,6 +11,7 @@ import { SpaceFormType } from "../schema";
 import LandingPageForm from "./landing-page-form";
 import SettingsForm from "./settings-form";
 import ThankYouForm from "./thankyou-form";
+import NotificationForm from "./notification-form";
 
 interface Props {
   mode: "edit" | "new";
@@ -53,7 +54,7 @@ export default function Space({ mode, data }: Props) {
     LandingPage: <LandingPageForm />,
     Settings: <SettingsForm />,
     ThankYou: <ThankYouForm />,
-    Notifications: <SettingsForm />,
+    Notifications: <NotificationForm />,
   };
 
   const onSubmit = (data: any) => {
