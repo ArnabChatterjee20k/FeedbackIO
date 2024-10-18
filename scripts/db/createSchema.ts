@@ -39,6 +39,38 @@ async function createSchemaAttributes(
   }
 }
 
+async function createSpaceSchema(colId?:string) {
+  const { db } = await createAdminClient();
+  const collectionID =
+    colId || (await db.createCollection(DB_ID, ID.unique(), "space")).$id;
+
+  const attributeCreators: AttributeCreator[] = [
+    {
+      key: "logo",
+      create: () => db.createUrlAttribute(DB_ID, collectionID, "logo", true),
+    },
+    {
+      key: "spaceName",
+      create: () => db.createStringAttribute(DB_ID, collectionID, "name", 100, true)
+    },
+    {
+      key: "userId",
+      create: () => db.createStringAttribute(DB_ID, collectionID, "userId", 36, true)
+    }
+  ];
+
+  try {
+    await createSchemaAttributes(db, "space", attributeCreators);
+    console.log(
+      `Space schema created successfully. Collection ID: ${collectionID}`
+    );
+    return collectionID;
+  } catch (error) {
+    console.error("Failed to create space schema:", error);
+    throw error;
+  }
+}
+
 async function createLandingPageSchema(colId?: string) {
   const { db } = await createAdminClient();
   const collectionID =
@@ -55,12 +87,12 @@ async function createLandingPageSchema(colId?: string) {
         db.createStringAttribute(DB_ID, collectionID, "name", 100, true),
     },
     {
-      key: "spaceMessage",
+      key: "message",
       create: () =>
         db.createStringAttribute(
           DB_ID,
           collectionID,
-          "spaceMessage",
+          "message",
           1000,
           true
         ),
@@ -93,6 +125,10 @@ async function createLandingPageSchema(colId?: string) {
       create: () =>
         db.createStringAttribute(DB_ID, collectionID, "buttonText", 40, true),
     },
+    {
+      key: "space_id",
+      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
+    }
   ];
 
   try {
@@ -148,6 +184,10 @@ async function createSettingsSchema(colId?: string) {
           true
         ),
     },
+    {
+      key: "space_id",
+      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
+    }
   ];
 
   try {
@@ -190,6 +230,10 @@ async function createNotificationSchema(colId?: string) {
           true
         ),
     },
+    {
+      key: "space_id",
+      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
+    }
   ];
 
   try {
@@ -233,6 +277,10 @@ async function createThankYouPageSchema(colId?: string) {
           true
         ),
     },
+    {
+      key: "space_id",
+      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
+    }
   ];
 
   try {
@@ -247,5 +295,4 @@ async function createThankYouPageSchema(colId?: string) {
   }
 }
 
-await createThankYouPageSchema("6712b036001462701174")
-await createNotificationSchema()
+createSpaceSchema("6712b1c0002c31c0703a")

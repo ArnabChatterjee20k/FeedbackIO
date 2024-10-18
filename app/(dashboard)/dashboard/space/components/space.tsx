@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useTransition } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import FeedbackForm from "../../../../../components/feedback-form";
@@ -12,6 +12,12 @@ import LandingPageForm from "./landing-page-form";
 import SettingsForm from "./settings-form";
 import ThankYouForm from "./thankyou-form";
 import NotificationForm from "./notification-form";
+import createSpaceAction, {
+  SpaceFormState,
+} from "../actions/create-space.action";
+import { useFormState } from "react-dom";
+import { z } from "zod";
+import { toast } from "sonner";
 
 interface Props {
   mode: "edit" | "new";
@@ -22,12 +28,10 @@ type TabName = "LandingPage" | "ThankYou" | "Settings" | "Notifications";
 
 export default function Space({ mode, data }: Props) {
   const {
-    methods: { register, handleSubmit, watch, formState, control },
+    methods: { handleSubmit },
     spaceState,
-    setSpaceState,
   } = useProjectContext();
   const [activeTab, setActiveTab] = useState<TabName>("LandingPage");
-
   const tabContent: Record<TabName, React.ReactNode> = {
     LandingPage: (
       <LandingPage
@@ -41,7 +45,7 @@ export default function Space({ mode, data }: Props) {
         spaceDetails={{ ...spaceState.landingPageSchema }}
       />
     ),
-    ThankYou: <ThankYouPage {...spaceState.thankYouPageSchema}/>,
+    ThankYou: <ThankYouPage {...spaceState.thankYouPageSchema} />,
     Notifications: (
       <FeedbackForm
         {...spaceState.settingsSchema}
@@ -49,6 +53,7 @@ export default function Space({ mode, data }: Props) {
       />
     ),
   };
+  const [isTransition, startTransition] = useTransition();
 
   const forms: Record<TabName, React.ReactNode> = {
     LandingPage: <LandingPageForm />,
@@ -57,13 +62,30 @@ export default function Space({ mode, data }: Props) {
     Notifications: <NotificationForm />,
   };
 
-  const onSubmit = (data: any) => {
-    console.log("Form Submitted:", data);
-  };
+  /**
+   * we cant use formState as react-hook-form does not compatible
+   * if we want use it then we have call submit manually using a ref inside the handleSubmit
+   * but it will only submit the current step form data and not all the forms
+   */
+  const onSubmit = handleSubmit((data) => {
+    startTransition(async () => {
+      const { message, success, errors } = await createSpaceAction(data);
+      if (!success) {
+        Object.entries(errors || {}).forEach(([key, errorsSend]) => {
+          errorsSend.forEach((error) => {
+            toast.error(`Error occured in ${key}`, {
+              description: error,
+              duration: 4000,
+            });
+          });
+        });
+      }
+    });
+  });
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={onSubmit}
       className="overflow-x-hidden flex flex-col md:flex-row gap-8 p-5 justify-between max-w-[1800px] mx-auto w-full"
     >
       <div className="w-full md:w-1/3">
@@ -101,7 +123,7 @@ export default function Space({ mode, data }: Props) {
           type="submit"
           className="my-2 rounded-sm w-full md:w-auto md:ml-[50%] md:mr-[50%]"
         >
-          Create Space
+          {isTransition ? "Loading..." : "Create Space"}
         </Button>
       </div>
     </form>

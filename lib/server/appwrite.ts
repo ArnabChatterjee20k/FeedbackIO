@@ -35,6 +35,9 @@ export async function createAdminClient() {
     get account() {
       return new Account(client);
     },
+    get db(){
+      return new Databases(client)
+    }
   };
 }
 export async function signUpWithGoogle() {

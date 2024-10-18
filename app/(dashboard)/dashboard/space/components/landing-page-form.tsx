@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FormBuilder, { FieldConfig } from "./form-builder";
+import { useProjectContext } from "../context/ProjectContextProvider";
+import { toast } from "sonner";
 
 export default function LandingPageForm() {
   const formConfig: FieldConfig[] = [
@@ -50,10 +52,26 @@ export default function LandingPageForm() {
       path: "landingPageSchema.buttonText",
     },
   ];
-  return (
-    <FormBuilder
-      page="landingPageSchema"
-      config={formConfig}
-    />
-  );
+  const {
+    methods: { formState },
+  } = useProjectContext();
+  const errors = formState["errors"]?.landingPageSchema as Record<
+    string,
+    Record<string, Record<string, string>>
+  >;
+  const isQuestionSectionError = errors?.landingPageSchema["questionSection"];
+  // since the question toast was rendering twice so used useEffect
+  useEffect(() => {
+    if (isQuestionSectionError) {
+      toast.warning("Questions not provided", {
+        description: "Either disable questions or add questions",
+        dismissible: true,
+        duration: 1000,
+        onAutoClose() {
+          ref.current = null;
+        },
+      });
+    }
+  }, [isQuestionSectionError]);
+  return <FormBuilder page="landingPageSchema" config={formConfig} />;
 }
