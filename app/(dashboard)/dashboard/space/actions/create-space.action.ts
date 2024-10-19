@@ -6,9 +6,10 @@ import {
   BasicSpaceSchema,
   basicSpaceSchema,
 } from "../schema/basic-space.schema";
-import { getUser, rollback } from "@/lib/server/utils";
+import { getUser, rollback, rollbackFile } from "@/lib/server/utils";
 import { signOut } from "@/lib/server/appwrite";
 import { redirect } from "next/navigation";
+import { upload } from "@/lib/server/storage/file";
 
 export interface DefaultSpaceFormType {
   errors: string[];
@@ -36,12 +37,20 @@ export default async function createDefaultSpaceAction(
     };
   }
   const { name, message, logo } = parsedData.data;
+  let logoURL = ""
+  let logoId = ""
+  if(logo instanceof File){
+    const {fileURL,success,fileId} = await upload(logo)
+    if(!success) return {errors:["File uploading eror. Please try again"]}
+    logoURL = fileURL
+    logoId = fileId
+  }
   const {
     success: spaceStatus,
     colId: spaceColId,
     docId: spaceDocId,
     message: statusMessage,
-  } = await createSpace(user?.$id as string, name, logo as string);
+  } = await createSpace(user?.$id as string, name, logoURL as string);
   if (!spaceStatus) {
     return {
       errors: [statusMessage],
@@ -49,9 +58,9 @@ export default async function createDefaultSpaceAction(
     };
   }
   const defaultValues = defaultSpacePageValues;
-  defaultValues["landingPageSchema"].name = [];
+  defaultValues["landingPageSchema"].name = name;
   defaultValues["landingPageSchema"].message = message;
-  defaultValues["landingPageSchema"].logo = logo;
+  defaultValues["landingPageSchema"].logo = logoURL;
   const {
     success: pageStatus,
     message: pageMessage,
@@ -64,7 +73,7 @@ export default async function createDefaultSpaceAction(
       ...(createdDocs?.length ? createdDocs : []),
       { docId: spaceDocId as string, colId: spaceColId as string },
     ];
-    await rollback(allCreatedDocs);
+    await Promise.allSettled([rollback(allCreatedDocs),rollbackFile(logoId)]);
     return {
       errors: [pageMessage],
     };

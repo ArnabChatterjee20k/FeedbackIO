@@ -1,4 +1,4 @@
-import { createSessionClient } from "./appwrite";
+import { createAdminClient, createSessionClient } from "./appwrite";
 import { DB_ID } from "./db/config";
 export async function getUser() {
   try {
@@ -24,4 +24,15 @@ export async function rollback(createdDocs:{ docId: string; colId: string }[]){
       }
     }
 
+}
+
+export async function rollbackFile(fileId:string){
+  const bucketId = process.env.BUCKET_ID as string
+  console.warn("Rolling back: ",fileId);
+  try {
+    const {storage} = await createAdminClient()
+    storage.deleteFile(bucketId,fileId)
+  } catch (rollbackError) {
+    console.error("Error during rolling back",rollbackError)
+  }
 }

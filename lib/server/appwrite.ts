@@ -1,8 +1,13 @@
 "use server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Client, Account, OAuthProvider,Databases} from "node-appwrite";
-
+import {
+  Client,
+  Account,
+  OAuthProvider,
+  Databases,
+  Storage,
+} from "node-appwrite";
 export async function createSessionClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -19,9 +24,9 @@ export async function createSessionClient() {
     get account() {
       return new Account(client);
     },
-    get db(){
-      return new Databases(client)
-    }
+    get db() {
+      return new Databases(client);
+    },
   };
 }
 
@@ -35,8 +40,11 @@ export async function createAdminClient() {
     get account() {
       return new Account(client);
     },
-    get db(){
-      return new Databases(client)
+    get db() {
+      return new Databases(client);
+    },
+    get storage() {
+      return new Storage(client);
     }
   };
 }
@@ -55,7 +63,7 @@ export async function signUpWithGoogle() {
 }
 
 export async function signOut() {
-  const {account} = await createSessionClient()
-  await account.deleteSessions()
+  const { account } = await createSessionClient();
+  await account.deleteSessions();
   cookies().delete(process.env.NEXT_SESSION_COOKIE!);
 }

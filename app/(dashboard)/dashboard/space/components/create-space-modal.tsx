@@ -87,7 +87,7 @@ export default function SpaceModal({ children }: PropsWithChildren) {
               />
               <AvatarFallback>Avatar</AvatarFallback>
             </Avatar>
-            <Input type="file" accept="image/*" onChange={handleFileChange} />
+            <Input name="logo" type="file" accept="image/*" onChange={handleFileChange} />
           </div>
           <DialogFooter>
             <SubmitButton />

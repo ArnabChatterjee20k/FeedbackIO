@@ -34,6 +34,7 @@ export default async function page() {
             {spaces?.length ? (
               spaces.map((space) => (
                 <Card
+                  logo={space.logo}
                   key={space.$id}
                   name={space.name}
                   feedbacks={12}

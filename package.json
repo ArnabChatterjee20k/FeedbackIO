@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "db:setup": "npx ts-node scripts/db/createSchema.ts"
+    "db:setup": "npx tsx scripts/db/createSchema.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

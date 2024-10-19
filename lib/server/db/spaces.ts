@@ -2,7 +2,7 @@
 import { ID, Models } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { DB_ID, SPACES_COL_ID } from "./config";
-import { DB_RESPONSE } from "./types";
+import { SERVER_RESPONSE } from "./types";
 import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
 import { rollback } from "../utils";
 
@@ -16,7 +16,7 @@ export async function createSpace(
   userId: string,
   name: string,
   logo: string
-): Promise<DB_RESPONSE> {
+): Promise<SERVER_RESPONSE> {
   try {
     const { db } = await createSessionClient();
     const createdSpace = await db.createDocument(
@@ -49,7 +49,7 @@ export async function createSpace(
 export async function createSpacePages(
   spaceId: string,
   data: SpaceFormType
-): Promise<DB_RESPONSE> {
+): Promise<SERVER_RESPONSE> {
   const { db } = await createSessionClient();
   const {
     landingPageSchema,

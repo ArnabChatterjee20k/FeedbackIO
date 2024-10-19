@@ -47,7 +47,7 @@ async function createSpaceSchema(colId?:string) {
   const attributeCreators: AttributeCreator[] = [
     {
       key: "logo",
-      create: () => db.createUrlAttribute(DB_ID, collectionID, "logo", true),
+      create: () => db.createStringAttribute(DB_ID, collectionID, "logo",4000,true),
     },
     {
       key: "spaceName",
@@ -79,7 +79,7 @@ async function createLandingPageSchema(colId?: string) {
   const attributeCreators: AttributeCreator[] = [
     {
       key: "logo",
-      create: () => db.createUrlAttribute(DB_ID, collectionID, "logo", true),
+      create: () => db.createStringAttribute(DB_ID, collectionID, "logo",4000,true),
     },
     {
       key: "name",
@@ -295,4 +295,4 @@ async function createThankYouPageSchema(colId?: string) {
   }
 }
 
-createSpaceSchema("6712b1c0002c31c0703a")
+Promise.allSettled([createSpaceSchema("6712b1c0002c31c0703a"),createLandingPageSchema("6712af200005bddd2d27")])
