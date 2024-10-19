@@ -43,4 +43,13 @@ export function getDefaults<T extends z.ZodTypeAny>( schema: z.AnyZodObject | z.
     )
 }
 
+const landingPageDefaultValues = getDefaults(
+  z.ZodObject.create(landingPageSchema.innerType().shape)
+);
+
+export const defaultSpacePageValues:SpaceFormType = {
+    ...getDefaults(spaceFormSchema),
+    landingPageSchema: landingPageDefaultValues,
+  }
+
 export type SpaceFormType = z.infer<typeof spaceFormSchema>;

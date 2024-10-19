@@ -7,7 +7,12 @@ import {
   useController,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SpaceFormType, getDefaults, spaceFormSchema } from "../schema";
+import {
+  SpaceFormType,
+  defaultSpacePageValues,
+  getDefaults,
+  spaceFormSchema,
+} from "../schema";
 import landingPageSchema from "../schema/landing-page.schema";
 import { z } from "zod";
 
@@ -26,24 +31,16 @@ export const useProjectContext = () => {
   return context;
 };
 
-const defaultValues = getDefaults(spaceFormSchema);
-const landingPageDefaultValues = getDefaults(
-  z.ZodObject.create(landingPageSchema.innerType().shape)
-);
 export function ProjectContextProvider({
   children,
   initialSpaceData,
 }: PropsWithChildren & { initialSpaceData?: Partial<SpaceFormType> }) {
-  const [spaceState, setSpaceState] = useState<SpaceFormType>({
-    ...defaultValues,
-    landingPageSchema: landingPageDefaultValues,
-  });
+  const [spaceState, setSpaceState] = useState<SpaceFormType>(
+    defaultSpacePageValues
+  );
   const methods = useForm<SpaceFormType>({
     resolver: zodResolver(spaceFormSchema),
-    defaultValues: {
-      ...defaultValues,
-      landingPageSchema: landingPageDefaultValues,
-    },
+    defaultValues: defaultSpacePageValues,
   });
 
   return (

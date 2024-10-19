@@ -5,7 +5,7 @@ import Card from "@/components/card";
 import { getSpaces } from "@/lib/server/db/spaces";
 import Empty from "../../../components/empty";
 import { PlusIcon } from "lucide-react";
-import Link from "next/link";
+import SpaceModal from "./space/components/create-space-modal";
 
 export default async function page() {
   const user = await getUser();
@@ -23,12 +23,12 @@ export default async function page() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-start">
           <div className="flex justify-between w-full items-center">
             <h2 className="text-4xl font-extrabold">Spaces</h2>
-            <Link href="/dashboard/space?mode=new">
+            <SpaceModal>
               <Button className="flex gap-1 items-center">
                 <PlusIcon size={18} />
                 Create a new space
               </Button>
-            </Link>
+            </SpaceModal>
           </div>
           <div className="mt-4 grid-cols-3 md:grid md:gap-4 mx-auto">
             {spaces?.length ? (

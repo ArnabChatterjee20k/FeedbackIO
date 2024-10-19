@@ -1,71 +1,73 @@
 "use server";
+
+import { createSpace, createSpacePages } from "@/lib/server/db/spaces";
+import { defaultSpacePageValues } from "../schema";
+import {
+  BasicSpaceSchema,
+  basicSpaceSchema,
+} from "../schema/basic-space.schema";
+import { getUser, rollback } from "@/lib/server/utils";
+import { signOut } from "@/lib/server/appwrite";
 import { redirect } from "next/navigation";
-import { spaceFormSchema, type SpaceFormType } from "../schema";
-import landingPageSchema from "../schema/landing-page.schema";
-import notificationSchema from "../schema/notification.schema";
-import settingsSchema from "../schema/setting.schema";
-import thankYouPageSchema from "../schema/thank-you-page.schema";
-import { createSpacePages } from "@/lib/server/db/spaces";
 
-export type SpaceFormState = {
-  success: boolean;
-  message: string;
-  errors?: Record<string, string[]>;
-};
+export interface DefaultSpaceFormType {
+  errors: string[];
+  fields?: BasicSpaceSchema;
+}
 
-export default async function createSpaceAction(
-  data: SpaceFormType
-): Promise<SpaceFormState> {
-  const schemaValidations = [
-    {
-      key: "Landing Page",
-      schema: landingPageSchema,
-      data: data.landingPageSchema,
-      schemaName:"landingPageSchema"
-    },
-    { key: "Settings", schema: settingsSchema, data: data.settingsSchema , schemaName:"settingsSchema"},
-    {
-      key: "Thank You Page",
-      schema: thankYouPageSchema,
-      data: data.thankYouPageSchema,
-      schemaName: "thankYouPageSchema",
-    },
-    {
-      key: "Notification",
-      schema: notificationSchema,
-      data: data.notificationSchema,
-      schemaName:"notificationSchema"
-    },
-  ];
-  const validationResults = await Promise.all(
-    schemaValidations.map(async ({ key, schema, data,schemaName }) => {
-      const result = await schema.safeParseAsync(data);
-      return { key, result,schemaName };
-    })
-  );
-
-  const errors: Record<string, string[]> = {};
-
-  const validatedData = {};
-  validationResults.forEach(({ key, result,schemaName }) => {
-    if (!result.success) {
-      errors[key] = result.error.issues.map(
-        (issue) => `${issue.path.join(".")}: ${issue.message}`
-      );
-    } else {
-      // @ts-ignore
-      validatedData[schemaName] = result.data;
-    }
-  });
-
-  if (Object.keys(errors).length > 0) {
+export default async function createDefaultSpaceAction(
+  prevState: DefaultSpaceFormType,
+  formData: FormData
+): Promise<DefaultSpaceFormType> {
+  const user = await getUser();
+  if (!user) {
+    await signOut();
+    redirect("/");
+  }
+  const spaceData = Object.fromEntries(formData);
+  const parsedData = basicSpaceSchema.safeParse(spaceData);
+  if (!parsedData.success) {
+    const errors = parsedData.error.issues.map(
+      (issue) => `${issue.path.join(".")}: ${issue.message}`
+    );
     return {
-      success: false,
-      message: "Validation failed",
       errors,
+      fields: parsedData.data,
     };
   }
-  createSpacePages("arnab", validatedData);
-
-  // redirect("/dashboard/1");
+  const { name, message, logo } = parsedData.data;
+  const {
+    success: spaceStatus,
+    colId: spaceColId,
+    docId: spaceDocId,
+    message: statusMessage,
+  } = await createSpace(user?.$id as string, name, logo as string);
+  if (!spaceStatus) {
+    return {
+      errors: [statusMessage],
+      fields: parsedData.data,
+    };
+  }
+  const defaultValues = defaultSpacePageValues;
+  defaultValues["landingPageSchema"].name = [];
+  defaultValues["landingPageSchema"].message = message;
+  defaultValues["landingPageSchema"].logo = logo;
+  const {
+    success: pageStatus,
+    message: pageMessage,
+    createdDocs,
+  } = await createSpacePages(spaceDocId as string, defaultValues);
+  console.log({ createdDocs, pageMessage });
+  // rolling back both spaces and created pages. If no docs are created then deleting only the space
+  if (!pageStatus) {
+    const allCreatedDocs = [
+      ...(createdDocs?.length ? createdDocs : []),
+      { docId: spaceDocId as string, colId: spaceColId as string },
+    ];
+    await rollback(allCreatedDocs);
+    return {
+      errors: [pageMessage],
+    };
+  }
+  return { errors: [] };
 }

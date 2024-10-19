@@ -2,19 +2,54 @@
 import { ID, Models } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { DB_ID, SPACES_COL_ID } from "./config";
-import { Space } from "./types";
+import { DB_RESPONSE } from "./types";
 import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
+import { rollback } from "../utils";
 
 export async function getSpaces(userId: string) {
   const { db } = await createSessionClient();
-  const spaces = await db.listDocuments<Space>(DB_ID, SPACES_COL_ID);
+  const spaces = await db.listDocuments(DB_ID, SPACES_COL_ID);
   return spaces.documents;
 }
 
-export async function createSpace(userId: string, name: string, logo: string) {}
+export async function createSpace(
+  userId: string,
+  name: string,
+  logo: string
+): Promise<DB_RESPONSE> {
+  try {
+    const { db } = await createSessionClient();
+    const createdSpace = await db.createDocument(
+      DB_ID,
+      SPACES_COL_ID,
+      ID.unique(),
+      {
+        userId,
+        name,
+        logo: logo,
+      }
+    );
 
-export async function createSpacePages(spaceId: string, data: SpaceFormType) {
-    console.log({spaceId})
+    const createdSpaceId = createdSpace.$id;
+    return {
+      success: true,
+      message: "Successfully created space",
+      docId: createdSpaceId,
+      colId: SPACES_COL_ID,
+    };
+  } catch (error) {
+    console.error("Error during creating spaces ", error);
+    return {
+      success: false,
+      message: "Error while creating the space",
+    };
+  }
+}
+
+export async function createSpacePages(
+  spaceId: string,
+  data: SpaceFormType
+): Promise<DB_RESPONSE> {
   const { db } = await createSessionClient();
   const {
     landingPageSchema,
@@ -23,63 +58,49 @@ export async function createSpacePages(spaceId: string, data: SpaceFormType) {
     thankYouPageSchema,
   } = data;
 
-  console.log({ ...notificationSchema, "space_id": spaceId })
-
-  const action: Record<string, Promise<Models.Document>> = {
-    landingPage: db.createDocument(
+  const action: Record<string, ()=>Promise<Models.Document>> = {
+    landingPage: ()=> db.createDocument(
       DB_ID,
       process.env.LANDING_PAGE_COL_ID!,
       ID.unique(),
-      { ...landingPageSchema, "space_id": spaceId }
+      { ...landingPageSchema, space_id: spaceId }
     ),
-    settings: db.createDocument(
+    settings:()=> db.createDocument(
       DB_ID,
       process.env.SETTINGS_COL_ID!,
       ID.unique(),
-      { ...settingsSchema, "space_id": spaceId }
+      { ...settingsSchema, space_id: spaceId }
     ),
-    notifications: db.createDocument(
+    notifications:()=> db.createDocument(
       DB_ID,
       process.env.NOTIFICATIONS_COL_ID!,
       ID.unique(),
-      { ...notificationSchema, "space_id": spaceId }
+      { ...notificationSchema, space_id: spaceId }
     ),
-    thankYou: db.createDocument(
+    thankYou: ()=>db.createDocument(
       DB_ID,
       process.env.THANK_YOU_COL_ID!,
-      ID.unique(),{ ...thankYouPageSchema, "space_id": spaceId }
+      ID.unique(),
+      { ...thankYouPageSchema, space_id: spaceId }
     ),
   };
   const createdDocs: { docId: string; colId: string }[] = [];
-
-  try {
-    for (const [collection, promise] of Object.entries(action)) {
-      const insertion = await promise;
+  for (const [collection, documentInsertionAction] of Object.entries(action)) {
+    try {
+      const insertion = await documentInsertionAction();
       createdDocs.push({
         docId: insertion.$id,
         colId: insertion.$collectionId,
       });
-    }
-    return { success: true, createdDocs };
-  } catch (error) {
-    // rollback
-    console.error("Error creating documents:", error);
-    console.warn("Rolling back: ",createdDocs)
-    for (const doc of createdDocs) {
-        console.log("rolling back")
-      try {
-        await db.deleteDocument(DB_ID, doc.colId, doc.docId);
-      } catch (rollbackError) {
-        console.error(
-          `Error during rollback for document ${doc.docId}:`,
-          rollbackError
-        );
-      }
-    }
 
-    return {
-      success: false,
-      error: "Failed to create all documents. Changes rolled back.",
-    };
+    } catch (error) {
+      console.error("Error creating documents:", error);
+      return {
+        success: false,
+        message: "Failed to create all documents",
+        createdDocs,
+      };
+    }
   }
+  return { success: true, message: "All pages are created", createdDocs };
 }

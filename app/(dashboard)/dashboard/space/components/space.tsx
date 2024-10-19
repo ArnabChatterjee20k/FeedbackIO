@@ -14,7 +14,7 @@ import ThankYouForm from "./thankyou-form";
 import NotificationForm from "./notification-form";
 import createSpaceAction, {
   SpaceFormState,
-} from "../actions/create-space.action";
+} from "../actions/edit-space.action";
 import { useFormState } from "react-dom";
 import { z } from "zod";
 import { toast } from "sonner";
