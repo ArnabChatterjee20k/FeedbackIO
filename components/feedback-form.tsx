@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Branding from "./branding";
-import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
+import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
 type DetailsProps = Pick<
   SpaceFormType["landingPageSchema"],
   "name" | "logo" | "message"

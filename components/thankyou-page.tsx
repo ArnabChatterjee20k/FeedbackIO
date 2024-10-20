@@ -1,5 +1,5 @@
 // pages/index.js
-import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
+import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
 import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 

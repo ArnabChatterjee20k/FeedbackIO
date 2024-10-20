@@ -1,8 +1,8 @@
 import React, { useRef, useState, useTransition } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import FeedbackForm from "../../../../../components/feedback-form";
-import ThankYouPage from "../../../../../components/thankyou-page";
+import FeedbackForm from "../../../../../../components/feedback-form";
+import ThankYouPage from "../../../../../../components/thankyou-page";
 import { Button } from "@/components/ui/button";
 import { useProjectContext } from "../context/ProjectContextProvider";
 import { Controller } from "react-hook-form";

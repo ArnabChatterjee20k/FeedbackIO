@@ -5,7 +5,7 @@ import Card from "@/components/card";
 import { getSpaces } from "@/lib/server/db/spaces";
 import Empty from "../../../components/empty";
 import { PlusIcon } from "lucide-react";
-import SpaceModal from "./space/components/create-space-modal";
+import SpaceModal from "../../(workspace)/dashboard/[projectId]/settings/components/create-space-modal";
 
 export default async function page() {
   const user = await getUser();
@@ -39,6 +39,7 @@ export default async function page() {
                   name={space.name}
                   feedbacks={12}
                   sentiment="POSITIVE"
+                  spaceId = {space.$id}
                 />
               ))
             ) : (

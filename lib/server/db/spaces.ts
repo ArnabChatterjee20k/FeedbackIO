@@ -3,7 +3,7 @@ import { ID, Models } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { DB_ID, SPACES_COL_ID } from "./config";
 import { SERVER_RESPONSE } from "./types";
-import { SpaceFormType } from "@/app/(dashboard)/dashboard/space/schema";
+import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
 import { rollback } from "../utils";
 
 export async function getSpaces(userId: string) {
