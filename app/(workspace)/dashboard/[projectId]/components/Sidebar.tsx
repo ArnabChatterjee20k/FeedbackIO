@@ -42,6 +42,8 @@ import {
 import { Separator } from "../../../../../components/ui/separator";
 import { Space, User } from "../types/navTypes";
 import GraidentAvatar from "@/components/graident-avatar";
+import { useParams } from "next/navigation";
+
 const data = {
   navMain: [
     {
@@ -85,26 +87,8 @@ const data = {
     },
     {
       title: "Edit Space",
-      url: "#",
+      url: "settings",
       icon: Settings2,
-      items: [
-        {
-          title: "Landing page",
-          url: "#",
-        },
-        {
-          title: "Thank You Page",
-          url: "#",
-        },
-        {
-          title: "Feedback Settings",
-          url: "#",
-        },
-        {
-          title: "Notification Settings",
-          url: "#",
-        },
-      ],
     },
     {
       title: "Embed",

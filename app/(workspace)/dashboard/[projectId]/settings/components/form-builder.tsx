@@ -162,18 +162,14 @@ export default function FormBuilder({ config, page }: FormBuilderProps) {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setSpaceState((prev) => ({
-                            ...prev,
-                            [page]: {
-                              ...prev[page],
-                              [name.split(".")[1]]: reader.result,
-                            },
-                          }));
-                          onChange(reader.result);
-                        };
-                        reader.readAsDataURL(file);
+                        setSpaceState((prev) => ({
+                          ...prev,
+                          [page]: {
+                            ...prev[page],
+                            [name.split(".")[1]]: URL.createObjectURL(file),
+                          },
+                        }));
+                        onChange(file)
                       }
                     }}
                     accept="image/*"

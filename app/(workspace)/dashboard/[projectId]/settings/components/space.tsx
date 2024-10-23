@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef, useState, useTransition } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -19,17 +20,16 @@ import { useFormState } from "react-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 
+type TabName = "LandingPage" | "ThankYou" | "Settings" | "Notifications";
 interface Props {
-  mode: "edit" | "new";
-  data?: Record<string, string>;
+  spaceId:string
 }
 
-type TabName = "LandingPage" | "ThankYou" | "Settings" | "Notifications";
-
-export default function Space({ mode, data }: Props) {
+export default function Space({ spaceId }: Props) {
   const {
     methods: { handleSubmit },
     spaceState,
+    getChangedData,
   } = useProjectContext();
   const [activeTab, setActiveTab] = useState<TabName>("LandingPage");
   const tabContent: Record<TabName, React.ReactNode> = {
@@ -66,23 +66,42 @@ export default function Space({ mode, data }: Props) {
    * we cant use formState as react-hook-form does not compatible
    * if we want use it then we have call submit manually using a ref inside the handleSubmit
    * but it will only submit the current step form data and not all the forms
+   * passing the logo separately in form of formdata as File is not serialisable through the actions
    */
-  const onSubmit = handleSubmit((data) => {
-    startTransition(async () => {
-      const { message, success, errors } = await createSpaceAction(data);
-      if (!success) {
-        Object.entries(errors || {}).forEach(([key, errorsSend]) => {
-          errorsSend.forEach((error) => {
-            toast.error(`Error occured in ${key}`, {
-              description: error,
-              duration: 4000,
+  const onSubmit = handleSubmit(
+    (data) => {
+      startTransition(async () => {
+        const logo = data["landingPageSchema"]?.logo;
+        const formData = new FormData();
+        if (logo && logo instanceof File) {
+          // if its a file that means its been changed
+          // and removing the the logo from the schema
+          formData.set("logo", logo);
+          data["landingPageSchema"].logo = "";
+        }
+        const changedData = getChangedData(data);
+        const { message, success, errors } = await createSpaceAction(
+          // @ts-ignore
+          changedData,
+          formData,
+          spaceId
+        );
+        if (!success) {
+          Object.entries(errors || {}).forEach(([key, errorsSend]) => {
+            errorsSend.forEach((error) => {
+              toast.error(`Error occured in ${key}`, {
+                description: error,
+                duration: 4000,
+              });
             });
           });
-        });
-      }
-    });
-  });
-
+        }
+      });
+    },
+    (invalid) => {
+      toast.error("Check the tabs, some error happened");
+    }
+  );
   return (
     <form
       onSubmit={onSubmit}

@@ -59,17 +59,14 @@ export default function LandingPageForm() {
     string,
     Record<string, Record<string, string>>
   >;
-  const isQuestionSectionError = errors?.landingPageSchema["questionSection"];
+  const isQuestionSectionError = errors?.landingPageSchema?.questionSection;
   // since the question toast was rendering twice so used useEffect
   useEffect(() => {
     if (isQuestionSectionError) {
       toast.warning("Questions not provided", {
         description: "Either disable questions or add questions",
         dismissible: true,
-        duration: 1000,
-        onAutoClose() {
-          ref.current = null;
-        },
+        duration: 1000
       });
     }
   }, [isQuestionSectionError]);

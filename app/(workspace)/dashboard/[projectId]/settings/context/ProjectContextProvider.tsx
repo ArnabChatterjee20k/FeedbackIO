@@ -15,11 +15,13 @@ import {
 } from "../schema";
 import landingPageSchema from "../schema/landing-page.schema";
 import { z } from "zod";
+import { SpaceFormState } from "../actions/edit-space.action";
 
 export interface ISpace {
   methods: UseFormReturn<SpaceFormType>;
   spaceState: SpaceFormType;
   setSpaceState: React.Dispatch<React.SetStateAction<SpaceFormType>>;
+  getChangedData:(payload:SpaceFormType)=>Record<keyof SpaceFormType,object>
 }
 
 const ProjectContext = createContext<ISpace | null>(null);
@@ -36,15 +38,37 @@ export function ProjectContextProvider({
   initialSpaceData,
 }: PropsWithChildren & { initialSpaceData?: Partial<SpaceFormType> }) {
   const [spaceState, setSpaceState] = useState<SpaceFormType>(
-    defaultSpacePageValues
+    initialSpaceData as SpaceFormType
   );
   const methods = useForm<SpaceFormType>({
     resolver: zodResolver(spaceFormSchema),
-    defaultValues: defaultSpacePageValues,
+    defaultValues: initialSpaceData,
   });
 
+  function getChangedData(payload:SpaceFormType){
+    const finalResult:Record<keyof SpaceFormType,object> = {
+      landingPageSchema:{},
+      notificationSchema:{},
+      settingsSchema:{},
+      thankYouPageSchema:{}
+    }
+    if(!initialSpaceData) return finalResult
+    console.log(payload.landingPageSchema.logo)
+    Object.keys(finalResult).forEach((schema) => {
+      Object.entries(schema in initialSpaceData && initialSpaceData[schema as keyof SpaceFormType] as SpaceFormType[keyof SpaceFormType])
+        .forEach(([key, value]) => {
+          // @ts-ignore
+          if (key in payload[schema] && payload[schema][key] !== value) {
+            // @ts-ignore
+            finalResult[schema][key] = payload[schema][key] 
+          }
+        });
+    });
+    return finalResult
+  }
+
   return (
-    <ProjectContext.Provider value={{ methods, spaceState, setSpaceState }}>
+    <ProjectContext.Provider value={{ methods, spaceState, setSpaceState,getChangedData }}>
       <FormProvider {...methods}>{children}</FormProvider>
     </ProjectContext.Provider>
   );
