@@ -1,14 +1,32 @@
-"use client";
-
-import { useState } from "react";
-import { usePathname } from "next/navigation";
 import { AppSidebar } from "@/app/(workspace)/dashboard/[projectId]/components/Sidebar";
+import { getUser } from "@/lib/server/utils";
+import { Space, User } from "./types/navTypes";
+import { getSpace } from "@/lib/server/db/spaces";
+import { redirect } from "next/dist/server/api-utils";
+import { notFound } from "next/navigation";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { projectId: string };
 }) {
-
-  return <AppSidebar>{children}</AppSidebar>;
+  const user = await getUser();
+  const userDetails: User = {
+    email: user?.email as string,
+    name: user?.name as string,
+  };
+  const space = await getSpace(user?.$id as string, params.projectId);
+  if (!space) return notFound();
+  const spaceDetails: Space = {
+    logo: space.logo,
+    name: space.name,
+    plan: "free",
+  };
+  return (
+    <AppSidebar space={spaceDetails} user={userDetails}>
+      {children}
+    </AppSidebar>
+  );
 }

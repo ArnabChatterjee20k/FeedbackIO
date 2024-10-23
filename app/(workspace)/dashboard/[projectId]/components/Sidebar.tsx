@@ -12,6 +12,9 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  MessageSquareHeart,
+  Workflow,
+  Globe,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -28,133 +31,110 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../../../../../components/ui/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../../../../../components/ui/breadcrumb";
 import { Separator } from "../../../../../components/ui/separator";
-
-// This is sample data.
+import { Space, User } from "../types/navTypes";
+import GraidentAvatar from "@/components/graident-avatar";
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Playground",
+      title: "Feedbacks",
       url: "#",
-      icon: SquareTerminal,
+      icon: MessageSquareHeart,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Liked",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "Social Media",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "Archived",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Integrations",
       url: "#",
-      icon: Bot,
+      icon: Workflow,
       items: [
         {
-          title: "Genesis",
+          title: "Twitter",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Linkedin",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Add more",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
+      title: "Edit Space",
       url: "#",
       icon: Settings2,
       items: [
         {
-          title: "General",
+          title: "Landing page",
           url: "#",
         },
         {
-          title: "Team",
+          title: "Thank You Page",
           url: "#",
         },
         {
-          title: "Billing",
+          title: "Feedback Settings",
           url: "#",
         },
         {
-          title: "Limits",
+          title: "Notification Settings",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Embed",
+      url: "#",
+      icon: Globe,
+      items: [
+        {
+          title: "Wall of love",
+          url: "#",
+        },
+        {
+          title: "Feeback widget",
           url: "#",
         },
       ],
     },
   ],
-  projects: [
+  preview: [
     {
-      name: "Design Engineering",
+      name: "Landing Page",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "Wall of fame",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "Thank you page",
       url: "#",
       icon: Map,
     },
@@ -163,20 +143,28 @@ const data = {
 
 export function AppSidebar({
   children,
+  user,
+  space,
   ...props
-}: React.ComponentProps<typeof Sidebar>) {
+}: React.ComponentProps<typeof Sidebar> & { user: User; space: Space }) {
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader>
-          <TeamSwitcher teams={data.teams} />
+          <TeamSwitcher teams={[space]} />
         </SidebarHeader>
         <SidebarContent>
           <NavMain items={data.navMain} />
-          <NavProjects projects={data.projects} />
+          <NavProjects projects={data.preview} />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser
+            user={{
+              avatar: <GraidentAvatar id={user.email} />,
+              email: user.email,
+              name: user.name,
+            }}
+          />
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
@@ -200,9 +188,7 @@ export function AppSidebar({
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

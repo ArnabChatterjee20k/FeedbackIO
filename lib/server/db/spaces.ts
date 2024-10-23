@@ -1,15 +1,34 @@
 "use server";
-import { ID, Models } from "node-appwrite";
+import { ID, Models, Query } from "node-appwrite";
 import { createSessionClient } from "../appwrite";
 import { DB_ID, SPACES_COL_ID } from "./config";
 import { SERVER_RESPONSE } from "./types";
 import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
-import { rollback } from "../utils";
+import { getUser, rollback } from "../utils";
 
 export async function getSpaces(userId: string) {
   const { db } = await createSessionClient();
-  const spaces = await db.listDocuments(DB_ID, SPACES_COL_ID);
+  const spaces = await db.listDocuments(DB_ID, SPACES_COL_ID, [
+    Query.equal("userId", userId),
+  ]);
   return spaces.documents;
+}
+
+export async function getSpace(userId: string, spaceId: string) {
+  const { db } = await createSessionClient();
+  try {
+    const spaces = await db.listDocuments(DB_ID, process.env.SPACES_COL_ID!, [
+      Query.and([Query.equal("$id", spaceId), Query.equal("userId", userId)]),
+    ]);
+    if (spaces.total) {
+      const space = spaces.documents[0];
+      return { name: space.name, logo: space.logo };
+    }
+    return null;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
 export async function createSpace(
@@ -58,31 +77,27 @@ export async function createSpacePages(
     thankYouPageSchema,
   } = data;
 
-  const action: Record<string, ()=>Promise<Models.Document>> = {
-    landingPage: ()=> db.createDocument(
-      DB_ID,
-      process.env.LANDING_PAGE_COL_ID!,
-      ID.unique(),
-      { ...landingPageSchema, space_id: spaceId }
-    ),
-    settings:()=> db.createDocument(
-      DB_ID,
-      process.env.SETTINGS_COL_ID!,
-      ID.unique(),
-      { ...settingsSchema, space_id: spaceId }
-    ),
-    notifications:()=> db.createDocument(
-      DB_ID,
-      process.env.NOTIFICATIONS_COL_ID!,
-      ID.unique(),
-      { ...notificationSchema, space_id: spaceId }
-    ),
-    thankYou: ()=>db.createDocument(
-      DB_ID,
-      process.env.THANK_YOU_COL_ID!,
-      ID.unique(),
-      { ...thankYouPageSchema, space_id: spaceId }
-    ),
+  const action: Record<string, () => Promise<Models.Document>> = {
+    landingPage: () =>
+      db.createDocument(DB_ID, process.env.LANDING_PAGE_COL_ID!, ID.unique(), {
+        ...landingPageSchema,
+        space_id: spaceId,
+      }),
+    settings: () =>
+      db.createDocument(DB_ID, process.env.SETTINGS_COL_ID!, ID.unique(), {
+        ...settingsSchema,
+        space_id: spaceId,
+      }),
+    notifications: () =>
+      db.createDocument(DB_ID, process.env.NOTIFICATIONS_COL_ID!, ID.unique(), {
+        ...notificationSchema,
+        space_id: spaceId,
+      }),
+    thankYou: () =>
+      db.createDocument(DB_ID, process.env.THANK_YOU_COL_ID!, ID.unique(), {
+        ...thankYouPageSchema,
+        space_id: spaceId,
+      }),
   };
   const createdDocs: { docId: string; colId: string }[] = [];
   for (const [collection, documentInsertionAction] of Object.entries(action)) {
@@ -92,7 +107,6 @@ export async function createSpacePages(
         docId: insertion.$id,
         colId: insertion.$collectionId,
       });
-
     } catch (error) {
       console.error("Error creating documents:", error);
       return {
