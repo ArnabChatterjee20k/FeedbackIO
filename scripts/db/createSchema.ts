@@ -39,7 +39,7 @@ async function createSchemaAttributes(
   }
 }
 
-async function createSpaceSchema(colId?:string) {
+async function createSpaceSchema(colId?: string) {
   const { db } = await createAdminClient();
   const collectionID =
     colId || (await db.createCollection(DB_ID, ID.unique(), "space")).$id;
@@ -47,16 +47,19 @@ async function createSpaceSchema(colId?:string) {
   const attributeCreators: AttributeCreator[] = [
     {
       key: "logo",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "logo",4000,true),
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "logo", 4000, true),
     },
     {
       key: "spaceName",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "name", 100, true)
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "name", 100, true),
     },
     {
       key: "userId",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "userId", 36, true)
-    }
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "userId", 36, true),
+    },
   ];
 
   try {
@@ -79,7 +82,13 @@ async function createLandingPageSchema(colId?: string) {
   const attributeCreators: AttributeCreator[] = [
     {
       key: "logo",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "logo",4000,true),
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "logo", 4000, true),
+    },
+    {
+      key: "uid",
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "uid", 100, true),
     },
     {
       key: "name",
@@ -89,13 +98,7 @@ async function createLandingPageSchema(colId?: string) {
     {
       key: "message",
       create: () =>
-        db.createStringAttribute(
-          DB_ID,
-          collectionID,
-          "message",
-          1000,
-          true
-        ),
+        db.createStringAttribute(DB_ID, collectionID, "message", 1000, true),
     },
     {
       key: "primaryColor",
@@ -127,8 +130,9 @@ async function createLandingPageSchema(colId?: string) {
     },
     {
       key: "space_id",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
-    }
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true),
+    },
   ];
 
   try {
@@ -186,8 +190,14 @@ async function createSettingsSchema(colId?: string) {
     },
     {
       key: "space_id",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
-    }
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true),
+    },
+    {
+      key: "uid",
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "uid", 100, true),
+    },
   ];
 
   try {
@@ -220,6 +230,11 @@ async function createNotificationSchema(colId?: string) {
         ),
     },
     {
+      key: "uid",
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "uid", 100, true),
+    },
+    {
       key: "emailTemplate",
       create: () =>
         db.createStringAttribute(
@@ -232,8 +247,9 @@ async function createNotificationSchema(colId?: string) {
     },
     {
       key: "space_id",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
-    }
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true),
+    },
   ];
 
   try {
@@ -258,29 +274,23 @@ async function createThankYouPageSchema(colId?: string) {
     {
       key: "title",
       create: () =>
-        db.createStringAttribute(
-          DB_ID,
-          collectionID,
-          "title",
-          100,
-          true
-        ),
+        db.createStringAttribute(DB_ID, collectionID, "title", 100, true),
     },
     {
       key: "message",
       create: () =>
-        db.createStringAttribute(
-          DB_ID,
-          collectionID,
-          "message",
-          1000,
-          true
-        ),
+        db.createStringAttribute(DB_ID, collectionID, "message", 1000, true),
     },
     {
       key: "space_id",
-      create: () => db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true)
-    }
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "space_id", 36, true),
+    },
+    {
+      key: "uid",
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "uid", 100, true),
+    },
   ];
 
   try {
@@ -295,4 +305,7 @@ async function createThankYouPageSchema(colId?: string) {
   }
 }
 
-Promise.allSettled([createSpaceSchema("6712b1c0002c31c0703a"),createLandingPageSchema("6712af200005bddd2d27")])
+Promise.allSettled([
+  createSpaceSchema("6712b1c0002c31c0703a"),
+  createLandingPageSchema("6712af200005bddd2d27"),
+]);
