@@ -331,6 +331,22 @@
                     "array": false,
                     "size": 100,
                     "default": null
+                },
+                {
+                    "key": "newFileId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null
+                },
+                {
+                    "key": "newFileURL",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3000,
+                    "default": null
                 }
             ],
             "indexes": []
@@ -351,6 +367,42 @@
             "compression": "none",
             "encryption": true,
             "antivirus": true
+        }
+    ],
+    "functions": [
+        {
+            "$id": "671a08d10025157a6828",
+            "name": "delete-images",
+            "runtime": "python-3.9",
+            "execute": [
+                "any"
+            ],
+            "events": [
+                "databases.670f600400337e01d085.collections.6712b1c0002c31c0703a.documents.*.update"
+            ],
+            "scopes": [
+                "databases.read",
+                "databases.write",
+                "collections.read",
+                "collections.write",
+                "attributes.read",
+                "attributes.write",
+                "indexes.read",
+                "indexes.write",
+                "documents.read",
+                "documents.write",
+                "files.read",
+                "files.write",
+                "buckets.read",
+                "buckets.write"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "src/main.py",
+            "commands": "pip install -r requirements.txt",
+            "path": "functions/delete-images"
         }
     ]
 }

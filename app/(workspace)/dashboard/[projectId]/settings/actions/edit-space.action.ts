@@ -158,9 +158,9 @@ function hasUpdates(
   return Boolean(page && Object.keys(page).length > 0);
 }
 
-async function updateSpaceLogo(logoURL: string, spaceId: string): Promise<UpdateResult> {
+async function updateSpaceLogo(newlogoId:string,newLogoURL: string, spaceId: string): Promise<UpdateResult> {
   try {
-    await updatePage(spaceId, "space", { logo: logoURL });
+    await updatePage(spaceId, "space", { newFileURL: newLogoURL,newFileId:newlogoId });
     return { success: true, message: "Logo updated successfully" };
   } catch (error) {
     return {
@@ -177,21 +177,25 @@ async function updateLandingPage(
   spaceId: string
 ) {
   let logoUrl = "";
-
+  let logoId = ""
   if (logo) {
-    const { fileURL, success } = await upload(logo);
+    const { fileURL, success , fileId } = await upload(logo);
     if (!success) {
       throw new Error("Failed to upload logo");
     }
     logoUrl = fileURL;
+    logoId = fileId
   }
 
+  // Currently updating the landing page logo using event triggered by change in space logo
+  // space -> update the newFileId and newFileURL -> trigger action [update space logoURL and landingpage logoURL -> delete the fileId]
+  // For more consistency we can add another field success in space to track whether the field was successfully updated or not
+  // And run a cron to check the false success and update them
   return Promise.allSettled([
     updatePage(spaceId, "landingPage", {
-      ...data,
-      ...(logoUrl ? { logo: logoUrl } : {}),
+      ...data
     }),
-    ...(logoUrl ? [updateSpaceLogo(logoUrl, spaceId)] : []),
+    ...(logoUrl ? [updateSpaceLogo(logoId,logoUrl,spaceId)] : []),
   ]);
 }
 
