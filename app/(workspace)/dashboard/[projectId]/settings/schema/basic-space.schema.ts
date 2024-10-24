@@ -10,7 +10,7 @@ export const basicSpaceSchema = z.object({
     .string()
     .min(1, "Provide space message")
     .max(1000, "Maximum 1000 characters for message"),
-  logo: logoSchema.default("https://g-0ea4boehcqr.vusercontent.net/placeholder.svg?height=80&width=80"),
+  logo: logoSchema.optional().default("https://g-0ea4boehcqr.vusercontent.net/placeholder.svg?height=80&width=80"),
 });
 
 export type BasicSpaceSchema = z.infer<typeof basicSpaceSchema>;

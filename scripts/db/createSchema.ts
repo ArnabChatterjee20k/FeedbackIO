@@ -60,6 +60,11 @@ async function createSpaceSchema(colId?: string) {
       create: () =>
         db.createStringAttribute(DB_ID, collectionID, "userId", 36, true),
     },
+    {
+      key: "fileId",
+      create: () =>
+        db.createStringAttribute(DB_ID, collectionID, "fileId",100,false),
+    },
   ];
 
   try {

@@ -10,6 +10,7 @@ import { getUser, rollback, rollbackFile } from "@/lib/server/utils";
 import { signOut } from "@/lib/server/appwrite";
 import { redirect } from "next/navigation";
 import { upload } from "@/lib/server/storage/file";
+import { revalidatePath } from "next/cache";
 
 export interface DefaultSpaceFormType {
   errors: string[];
@@ -21,12 +22,13 @@ export default async function createDefaultSpaceAction(
   formData: FormData
 ): Promise<DefaultSpaceFormType> {
   const user = await getUser();
-  if (!user) {
-    await signOut();
-    redirect("/");
-  }
   const spaceData = Object.fromEntries(formData);
+  const defaultValues = defaultSpacePageValues;
+  if(spaceData.logo && spaceData.logo instanceof File ){
+    if(spaceData.logo.size === 0) spaceData.logo = defaultValues.landingPageSchema.logo
+  }
   const parsedData = basicSpaceSchema.safeParse(spaceData);
+  console.log(spaceData)
   if (!parsedData.success) {
     const errors = parsedData.error.issues.map(
       (issue) => `${issue.path.join(".")}: ${issue.message}`
@@ -37,7 +39,7 @@ export default async function createDefaultSpaceAction(
     };
   }
   const { name, message, logo } = parsedData.data;
-  let logoURL = ""
+  let logoURL = defaultValues.landingPageSchema.logo;
   let logoId = ""
   if(logo instanceof File){
     const {fileURL,success,fileId} = await upload(logo)
@@ -50,14 +52,13 @@ export default async function createDefaultSpaceAction(
     colId: spaceColId,
     docId: spaceDocId,
     message: statusMessage,
-  } = await createSpace(user?.$id as string, name, logoURL as string);
+  } = await createSpace(user?.$id as string, name, logoURL as string,logoId);
   if (!spaceStatus) {
     return {
       errors: [statusMessage],
       fields: parsedData.data,
     };
   }
-  const defaultValues = defaultSpacePageValues;
   defaultValues["landingPageSchema"].name = name;
   defaultValues["landingPageSchema"].message = message;
   defaultValues["landingPageSchema"].logo = logoURL;
@@ -78,5 +79,5 @@ export default async function createDefaultSpaceAction(
       errors: [pageMessage],
     };
   }
-  return { errors: [] };
+  return redirect(`/dashboard/${spaceDocId}`)
 }

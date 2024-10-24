@@ -26,7 +26,7 @@ function getSentimentSymbol(emotion: Sentiment): string {
 }
 export default function Card({ name, feedbacks, logo, spaceId }: Props) {
   return (
-    <Link href={`/dashboard/${spaceId}/feedbacks`}>
+    <Link href={`/dashboard/${spaceId}`}>
       <div className="w-96 bg-white cursor-pointer border border-gray-200 hover:shadow-sm transition-all mb-4 min-h-[140px] rounded-md  p-8 md:mb-0 flex flex-col justify-between">
         <div className="flex items-center gap-4">
           <Avatar>

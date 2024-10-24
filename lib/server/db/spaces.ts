@@ -41,7 +41,8 @@ export async function getSpace(userId: string, spaceId: string) {
 export async function createSpace(
   userId: string,
   name: string,
-  logo: string
+  logo: string,
+  logoId?:string
 ): Promise<SERVER_RESPONSE> {
   try {
     const { db } = await createSessionClient();
@@ -53,6 +54,7 @@ export async function createSpace(
         userId,
         name,
         logo: logo,
+        fileId:logoId || ""
       }
     );
 
@@ -84,52 +86,80 @@ export async function createSpacePages(
     thankYouPageSchema,
   } = data;
 
-  const action: Record<string, () => Promise<Models.Document>> = {
-    landingPage: () =>
-      db.createDocument(DB_ID, process.env.LANDING_PAGE_COL_ID!, spaceId, {
-        ...landingPageSchema,
-        space_id: spaceId,
-        uid: ID.unique(),
-      }),
-    settings: () =>
-      db.createDocument(DB_ID, process.env.SETTINGS_COL_ID!, spaceId, {
-        ...settingsSchema,
-        space_id: spaceId,
-        uid: ID.unique(),
-      }),
-    notifications: () =>
-      db.createDocument(DB_ID, process.env.NOTIFICATIONS_COL_ID!, spaceId, {
-        ...notificationSchema,
-        space_id: spaceId,
-        uid: ID.unique(),
-      }),
-    thankYou: () =>
-      db.createDocument(DB_ID, process.env.THANK_YOU_COL_ID!, spaceId, {
-        ...thankYouPageSchema,
-        space_id: spaceId,
-        uid: ID.unique(),
-      }),
-  };
-  const createdDocs: { docId: string; colId: string }[] = [];
-  for (const [collection, documentInsertionAction] of Object.entries(action)) {
-    try {
-      const insertion = await documentInsertionAction();
-      createdDocs.push({
-        docId: insertion.$id,
-        colId: insertion.$collectionId,
-      });
-    } catch (error) {
-      console.error("Error creating documents:", error);
-      return {
-        success: false,
-        message: "Failed to create all documents",
-        createdDocs,
-      };
-    }
-  }
-  return { success: true, message: "All pages are created", createdDocs };
-}
+  // Define document creation configurations
+  const documentConfigs = [
+    {
+      name: "landingPage",
+      collectionId: process.env.LANDING_PAGE_COL_ID!,
+      data: landingPageSchema,
+    },
+    {
+      name: "settings",
+      collectionId: process.env.SETTINGS_COL_ID!,
+      data: settingsSchema,
+    },
+    {
+      name: "notifications",
+      collectionId: process.env.NOTIFICATIONS_COL_ID!,
+      data: notificationSchema,
+    },
+    {
+      name: "thankYou",
+      collectionId: process.env.THANK_YOU_COL_ID!,
+      data: thankYouPageSchema,
+    },
+  ] as const;
 
+  const createdDocs: { docId: string; colId: string }[] = [];
+
+  try {
+    const results = await Promise.all(
+      documentConfigs.map(async (config) => {
+        const doc = await db.createDocument(
+          DB_ID,
+          config.collectionId,
+          spaceId,
+          {
+            ...config.data,
+            space_id: spaceId,
+            uid: ID.unique(),
+          }
+        );
+
+        const docInfo = {
+          docId: doc.$id,
+          colId: doc.$collectionId,
+          name: config.name,
+        };
+
+        // Add to createdDocs array as documents are created
+        createdDocs.push({
+          docId: docInfo.docId,
+          colId: docInfo.colId,
+        });
+
+        return docInfo;
+      })
+    );
+
+    return {
+      success: true,
+      message: "All pages created successfully",
+      createdDocs,
+    };
+  } catch (error) {
+    console.error("Error creating space pages:", error);
+
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? `Failed to create space pages: ${error.message}`
+          : "Failed to create space pages",
+      createdDocs, // Return the documents that were successfully created before the error
+    };
+  }
+}
 export async function getSpacePages(spaceId: string) {
   const { db } = await createSessionClient();
   const query = [Query.equal("space_id", spaceId), Query.limit(1)];
@@ -166,6 +196,7 @@ const Page = {
   landingPage: LANDING_PAGE_COL_ID,
   settingsPage: SETTINGS_COL_ID,
   notifcationsPage: NOTIFICATIONS_COL_ID,
+  space:SPACES_COL_ID
 } as const;
 
 export async function updatePage(
@@ -179,7 +210,7 @@ export async function updatePage(
     db.updateDocument(DB_ID, COL, space_id, data);
     return true;
   } catch (error) {
-    console.error("error during updating ",col,error)
+    console.error("error during updating ", col, error);
     return false;
   }
 }

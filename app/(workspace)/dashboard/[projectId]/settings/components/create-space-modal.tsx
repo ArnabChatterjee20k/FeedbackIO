@@ -63,7 +63,7 @@ export default function SpaceModal({ children }: PropsWithChildren) {
               <Input
                 name="name"
                 id="name"
-                value="Pedro Duarte"
+                placeholder="Ex- Hello world"
                 className="col-span-3"
               />
             </div>
@@ -73,8 +73,8 @@ export default function SpaceModal({ children }: PropsWithChildren) {
               </Label>
               <Input
                 name="message"
-                id="username"
-                value="@peduarte"
+                id="message"
+                placeholder="ex- welcome!"
                 className="col-span-3"
               />
             </div>
