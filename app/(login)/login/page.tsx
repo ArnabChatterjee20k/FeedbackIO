@@ -49,7 +49,7 @@ export default function Page() {
   );
 }
 
-export function GoogleSignIn() {
+function GoogleSignIn() {
   const { pending } = useFormStatus();
 
   return (
