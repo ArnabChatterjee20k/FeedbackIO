@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import FeedbackForm from "./feedback-form";
 import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
 
-type FeedbackFormProps = SpaceFormType["settingsSchema"];
-type LandingSectionProps = SpaceFormType["landingPageSchema"] & {
+export type FeedbackFormProps = SpaceFormType["settingsSchema"];
+export type LandingSectionProps = SpaceFormType["landingPageSchema"] & {
   feedbackFormProps: FeedbackFormProps;
 };
 

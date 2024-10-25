@@ -46,12 +46,12 @@ export default function FeedbackForm({
   const { name: spaceName, logo, message } = spaceDetails;
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="max-w-2xl w-full mx-auto">
       <CardHeader className="text-center">
         <div className="w-20 h-20 mx-auto my-7">
-          <Avatar className="rounded-full">
+          <Avatar className="rounded-full size-32">
             <AvatarImage
-              className="rounded-full"
+              className="aspect-square rounded-full"
               src={logo as string}
               alt="@shadcn"
             />

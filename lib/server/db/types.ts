@@ -6,5 +6,9 @@ export type SERVER_RESPONSE = {
   docId?: string;
   colId?: string;
 } & {
-  [key: string]: string | number | boolean | object | undefined;
+  [key: string]: string | number | boolean | object | undefined |null;
 };
+export type SERVER_FETCH_RESPONSE<T> = SERVER_RESPONSE & {
+  status:number,
+  docs: Models.Document & T | null
+}

@@ -1,9 +1,10 @@
+"use client"
 // pages/index.js
 import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
 import { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 
-type ThankYouPageProps = SpaceFormType["thankYouPageSchema"];
+export type ThankYouPageProps = SpaceFormType["thankYouPageSchema"];
 
 export default function ThankYouPage({ message, title }: ThankYouPageProps) {
   const [runConfetti, setRunConfetti] = useState(true);
