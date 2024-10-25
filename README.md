@@ -31,3 +31,8 @@ But the second one will not be highly expensive as it already ran. The check is 
 Can be solved using an external queue/collection updation.
 Queue col updated -> function for updating space,landingpage and deleting old file
 > Image change is unlikely to happen most of the time
+
+### Improvements
+1. Currently all pages and routes are totally dynamic and no caching getting done. So can be cached
+2. By using a domain, we can use apex domains to serve personalised pages
+3. Polls creation , form creation ,etc

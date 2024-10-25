@@ -26,6 +26,7 @@
     "@types/node": "^22.7.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vercel/functions": "^1.4.2",
     "appwrite": "16.0.2",
     "autoprefixer": "^10.4.20",
     "bcryptjs": "^2.4.3",
