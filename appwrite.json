@@ -350,6 +350,77 @@
                 }
             ],
             "indexes": []
+        },
+        {
+            "$id": "671bd95f001c4cce4f09",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"any\")"
+            ],
+            "databaseId": "670f600400337e01d085",
+            "name": "feedbacks",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "name",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 50,
+                    "default": null
+                },
+                {
+                    "key": "userID",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 50,
+                    "default": null
+                },
+                {
+                    "key": "userIP",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 20,
+                    "default": null
+                },
+                {
+                    "key": "stars",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "min": 1,
+                    "max": 10,
+                    "default": 1
+                },
+                {
+                    "key": "feedback",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 1000,
+                    "default": null
+                },
+                {
+                    "key": "userEmail",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null
+                },
+                {
+                    "key": "space_id",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 20,
+                    "default": null
+                }
+            ],
+            "indexes": []
         }
     ],
     "buckets": [
