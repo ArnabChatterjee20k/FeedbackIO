@@ -8,43 +8,33 @@ import {
 import { getSettings } from "@/lib/server/db/settings";
 import { ipAddress } from "@vercel/functions";
 import { NextRequest, NextResponse } from "next/server";
+import { validateUserForGivingFeedback } from "./feedback-api-utils";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { space_id: string } }
 ) {
+  const userIP = ipAddress(request) || process.env.DEFAULT_IP! || "";
   const spaceId = params.space_id;
-  const settings = await getSettings(spaceId);
-  const { docs, status } = settings;
-  if (!docs || status !== 200)
-    return NextResponse.json(
-      { success: false, settings: {} },
-      { status: status }
-    );
-  const {
-    authEnabledReview,
-    ipEnabledReview,
-    nameRequired,
-    starRatingRequired,
-  } = docs;
-  return NextResponse.json(
-    {
-      success: true,
-      settings: {
-        authEnabledReview,
-        ipEnabledReview,
-        nameRequired,
-        starRatingRequired,
-      },
-    },
-    { status: 200 }
-  );
+  const {status,...settingsRes} = await validateUserForGivingFeedback(spaceId,userIP)
+  return NextResponse.json(settingsRes,{
+    status:status,
+    headers:{
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    }
+  },)
 }
 
+// reading the cookies to check
+// along with cookies, sending the token in the body as well so that frontend can save it in the frontend to parse the payload and view it
 export async function POST(
   request: NextRequest,
   { params }: { params: { space_id: string } }
 ) {
+  const body: FeedbackBody = await request.json();
+
   const userIP = ipAddress(request) || process.env.DEFAULT_IP! || "";
   const spaceId = params.space_id;
   const { docs, status, message } = await getSettings(spaceId);
@@ -60,9 +50,9 @@ export async function POST(
     nameRequired,
     starRatingRequired,
   } = docs;
-  const body: FeedbackBody = await request.json();
   const checks: FeedbackGivenCheckParams["checks"] = {};
   if (authEnabledReview) {
+    // fetch details instead of directly using body
     if (!body.userEmail || !body.userID)
       return NextResponse.json(
         {
@@ -83,7 +73,11 @@ export async function POST(
       { status: 400 }
     );
 
-  if ((starRatingRequired && !body.stars) || (nameRequired && !body.name?.trim()) || !body.feedback.trim())
+  if (
+    (starRatingRequired && !body.stars) ||
+    (nameRequired && !body.name?.trim()) ||
+    !body.feedback.trim()
+  )
     return NextResponse.json(
       {
         message: "Please give the feedback and the star rating",

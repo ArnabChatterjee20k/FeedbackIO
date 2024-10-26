@@ -52,7 +52,7 @@ export async function isFeedbackGivenByTheUser({
   if (userID) queries.push(Query.equal("userID", userID));
   if (ip) queries.push(Query.equal("userIP", ip));
 
-  const finalQuery = queries.length > 1 ? [Query.and(queries)] : queries;
+  const finalQuery = queries.length > 1 ? [Query.or(queries)] : queries;
   try {
     const feedbacks = await db.listDocuments(
       DB_ID,

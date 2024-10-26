@@ -1,9 +1,16 @@
 // middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "./lib/server/utils";
-import { cookies } from "next/headers";
-
+const corsOptions = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
 export async function middleware(req: NextRequest) {
+  // preflighted requests
+  if(req.method==="OPTIONS"){
+    return NextResponse.json({},{headers:corsOptions})
+  }
   const user = await getUser();
   const isDashboardRequest = req.nextUrl.pathname.startsWith("/dashboard");
   const isLoginRequest = req.nextUrl.pathname.startsWith("/login");
@@ -19,5 +26,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/login"], // Only apply this middleware to the /dashboard route
+  matcher: ["/dashboard", "/login","/api/:path*"], // Only apply this middleware to the /dashboard route
 };

@@ -2,15 +2,16 @@ import { createAdminClient, createSessionClient } from "./appwrite";
 import { DB_ID } from "./db/config";
 export async function getUser() {
   try {
-    const { account } = await createSessionClient();
-    return await account.get();
+    const client = createSessionClient();
+    if (!client) return null;
+    return await client.account.get();
   } catch (error) {
     return null;
   }
 }
 
 export async function rollback(createdDocs:{ docId: string; colId: string }[]){
-  const {db} = await createSessionClient()
+  const {db} = createSessionClient()
   console.warn("Rolling back: ",createdDocs)
     for (const doc of createdDocs) {
         console.log("rolling back")

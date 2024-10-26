@@ -1,4 +1,3 @@
-"use server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
@@ -8,7 +7,7 @@ import {
   Databases,
   Storage,
 } from "node-appwrite";
-export async function createSessionClient() {
+export function createSessionClient() {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
