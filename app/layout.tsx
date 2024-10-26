@@ -1,25 +1,25 @@
-import { Toaster } from '@/components/ui/sonner';
-import './globals.css';
-import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { Toaster as AlertToaster } from "@/components/ui/toaster";
+import "./globals.css";
+import type { Metadata, Viewport } from "next";
+import { Manrope } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.',
+  title: "Next.js SaaS Starter",
+  description: "Get started quickly with Next.js, Postgres, and Stripe.",
 };
 
 export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const manrope = Manrope({ subsets: ['latin'] });
+const manrope = Manrope({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html
       lang="en"
@@ -27,7 +27,8 @@ export default function RootLayout({
     >
       <body className="min-h-[100dvh] bg-gray-50">
         {children}
-        <Toaster/>
+        <SonnerToaster />
+        <AlertToaster />
       </body>
     </html>
   );

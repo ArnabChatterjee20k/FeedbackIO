@@ -32,6 +32,7 @@ export default async function page({
       questionSection={questionSection as boolean}
       questions={questions as string[]}
       feedbackFormProps={settingsDocs}
+      spaceId={projectId}
     />
   );
 }

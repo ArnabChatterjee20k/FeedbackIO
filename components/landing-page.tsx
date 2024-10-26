@@ -19,7 +19,8 @@ export default function LandingPage({
   primaryColor,
   buttonText,
   feedbackFormProps,
-}: LandingSectionProps) {
+  spaceId
+}: LandingSectionProps & {spaceId:string}) {
   return (
     <div className="min-h-screen w-full flex flex-col items-center p-6 bg-white">
       <section className="w-full max-w-4xl mx-auto px-4 py-4">
@@ -72,6 +73,7 @@ export default function LandingPage({
               <FeedbackForm
                 {...feedbackFormProps}
                 spaceDetails={{ logo, name, message }}
+                spaceId={spaceId}
               />
             </DialogContent>
           </Dialog>

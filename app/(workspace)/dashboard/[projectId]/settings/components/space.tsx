@@ -37,12 +37,14 @@ export default function Space({ spaceId }: Props) {
       <LandingPage
         {...spaceState.landingPageSchema}
         feedbackFormProps={{ ...spaceState.settingsSchema }}
+        spaceId={spaceId}
       />
     ),
     Settings: (
       <FeedbackForm
         {...spaceState.settingsSchema}
         spaceDetails={{ ...spaceState.landingPageSchema }}
+        spaceId={spaceId}
       />
     ),
     ThankYou: <ThankYouPage {...spaceState.thankYouPageSchema} />,
@@ -50,6 +52,7 @@ export default function Space({ spaceId }: Props) {
       <FeedbackForm
         {...spaceState.settingsSchema}
         spaceDetails={{ ...spaceState.landingPageSchema }}
+        spaceId={spaceId}
       />
     ),
   };
