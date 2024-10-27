@@ -418,6 +418,22 @@
                     "array": false,
                     "size": 20,
                     "default": null
+                },
+                {
+                    "key": "userProfilePicture",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3000,
+                    "default": null
+                },
+                {
+                    "key": "feedbackType",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 50,
+                    "default": null
                 }
             ],
             "indexes": []

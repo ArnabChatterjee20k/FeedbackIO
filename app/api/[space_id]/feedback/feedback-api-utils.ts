@@ -1,6 +1,6 @@
 import "server-only";
 import { getSettings } from "@/lib/server/db/settings";
-import { getFeedbackCookie } from "../utils";
+import { getFeedbackCookie, setFeedbackCookie } from "../utils";
 import {
   isFeedbackGivenByTheUser,
   type FeedbackGivenCheckParams,
@@ -10,14 +10,17 @@ interface VALIDATION_RESPONSE {
   success: boolean;
   message: string;
   status: number;
-  token?: string;
   settings?: Record<string, boolean>;
+  type?: string;
+  userEmail?:string,
+  userID?:string
 }
 
 // Validation for check the validation of the user
 export async function validateUserForGivingFeedback(
   spaceId: string,
-  userIP: string
+  userIP: string,
+  token?:string
 ): Promise<VALIDATION_RESPONSE> {
   const settings = await getSettings(spaceId);
   const { docs, status } = settings;
@@ -42,25 +45,37 @@ export async function validateUserForGivingFeedback(
         status: 400,
         success: false,
         message: "Already feedback given",
-        token: feedbackToken,
+        type:"rate limit",
       };
   }
   const checks: FeedbackGivenCheckParams["checks"] = {};
+  let userEmail = ""
+  let userID = ""
   if (authEnabledReview) {
-    const user = await checkAuth();
+    const user = await checkAuth(token as string);
     if (!user)
       return {
         status: 400,
         success: false,
         message: "Authentication Required",
+        type: "auth",
       };
     checks["userID"] = user.$id;
+    userEmail = user.email
+    userID = user.$id
   }
   if (ipEnabledReview) checks["ip"] = userIP;
 
   const given = await isFeedbackGivenByTheUser({ checks });
-  if (given)
-    return { status: 400, success: false, message: "Already feedback given" };
+  if (given){
+    await setFeedbackCookie()
+    return {
+      status: 400,
+      success: false,
+      message: "Already feedback given",
+      type: "rate limit",
+    };
+  }
 
   return {
     success: true,
@@ -72,14 +87,16 @@ export async function validateUserForGivingFeedback(
       authEnabledReview,
       nameRequired,
     },
+    userEmail,
+    userID
   };
 }
 
-
-async function checkAuth(){
-    try {
-        return await getUser()
-    } catch {
-        return null
-    }
+async function checkAuth(token: string) {
+  if (!token) return null;
+  try {
+    return await getUser(token);
+  } catch {
+    return null;
+  }
 }

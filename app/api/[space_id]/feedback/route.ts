@@ -9,22 +9,20 @@ import { getSettings } from "@/lib/server/db/settings";
 import { ipAddress } from "@vercel/functions";
 import { NextRequest, NextResponse } from "next/server";
 import { validateUserForGivingFeedback } from "./feedback-api-utils";
+import { setFeedbackCookie } from "../utils";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { space_id: string } }
 ) {
+  const token = request.nextUrl.searchParams.get("token") || "";
   const userIP = ipAddress(request) || process.env.DEFAULT_IP! || "";
   const spaceId = params.space_id;
-  const {status,...settingsRes} = await validateUserForGivingFeedback(spaceId,userIP)
-  return NextResponse.json(settingsRes,{
-    status:status,
-    headers:{
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    }
-  },)
+  const { status, userEmail, userID, ...settingsRes } =
+    await validateUserForGivingFeedback(spaceId, userIP, token);
+  return NextResponse.json(settingsRes, {
+    status: status,
+  });
 }
 
 // reading the cookies to check
@@ -34,45 +32,25 @@ export async function POST(
   { params }: { params: { space_id: string } }
 ) {
   const body: FeedbackBody = await request.json();
-
+  const token = request.nextUrl.searchParams.get("token") || ""; // pass it to the session checker
   const userIP = ipAddress(request) || process.env.DEFAULT_IP! || "";
   const spaceId = params.space_id;
-  const { docs, status, message } = await getSettings(spaceId);
-  if (!docs || status !== 200)
-    return NextResponse.json(
-      { message: message, success: false },
-      { status: status }
-    );
-
   const {
-    authEnabledReview,
-    ipEnabledReview,
-    nameRequired,
-    starRatingRequired,
-  } = docs;
-  const checks: FeedbackGivenCheckParams["checks"] = {};
-  if (authEnabledReview) {
-    // fetch details instead of directly using body
-    if (!body.userEmail || !body.userID)
-      return NextResponse.json(
-        {
-          message: "Needed user details for authenticated review",
-          success: false,
-        },
-        { status: 400 }
-      );
-    checks["userID"] = body.userID;
-  }
-
-  if (ipEnabledReview) checks["ip"] = userIP;
-
-  const isFeedbackGiven = await isFeedbackGivenByTheUser({ checks });
-  if (isFeedbackGiven)
+    status,
+    message,
+    settings,
+    success: feedbackGetSuccess,
+    type,
+    userID,
+    userEmail,
+  } = await validateUserForGivingFeedback(spaceId, userIP, token);
+  if (!settings) {
     return NextResponse.json(
-      { message: "Already given", success: false },
-      { status: 400 }
+      { success: feedbackGetSuccess, message, type },
+      { status: !feedbackGetSuccess ? 400 : status }
     );
-
+  }
+  const { starRatingRequired, nameRequired } = settings;
   if (
     (starRatingRequired && !body.stars) ||
     (nameRequired && !body.name?.trim()) ||
@@ -85,16 +63,28 @@ export async function POST(
       },
       { status: 400 }
     );
-
-  const { success } = await addFeedback(spaceId, { ...body, userIP: userIP });
-  if (!success)
+  const { feedback, name, stars } = body;
+  const { success: feedbackAddSuccess } = await addFeedback(spaceId, {
+    feedback,
+    name,
+    stars,
+    userEmail,
+    userID,
+    userIP: userIP,
+  });
+  if (!feedbackAddSuccess)
     return NextResponse.json(
-      { message: "Some error occured while saving feedback", success: success },
+      {
+        message: "Some error occured while saving feedback",
+        success: feedbackAddSuccess,
+      },
       { status: 500 }
     );
 
   return NextResponse.json(
-    { message: "Feedback saved successfully", success: success },
-    { status: 200 }
+    { message: "Feedback saved successfully", success: feedbackAddSuccess },
+    {
+      status: 200,
+    }
   );
 }

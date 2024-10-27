@@ -5,7 +5,7 @@ export async function getFeedbackCookie() {
   const token = (await cookies()).get("feedback-so-token")?.value;
   if (token) {
     const jwt = await verifyJWT(token);
-    if (jwt["feedback-status"]) return token;
+    if (jwt["feedback-status"] === "200") return token;
   }
   return "";
 }
