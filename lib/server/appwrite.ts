@@ -1,3 +1,4 @@
+"use server";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
@@ -7,17 +8,21 @@ import {
   Databases,
   Storage,
 } from "node-appwrite";
-export function createSessionClient() {
+export async function createSessionClient(token?: string) {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!);
-
-  const session = cookies().get(process.env.NEXT_SESSION_COOKIE!);
-  if (!session || !session.value) {
-    throw new Error("No session");
+  if (token) {
+    client.setSession(token as string);
+  } else {
+    const session = cookies().get(
+      token ? token : process.env.NEXT_SESSION_COOKIE!
+    );
+    if (!session || !session.value) {
+      throw new Error("No session");
+    }
+    client.setSession(session.value);
   }
-
-  client.setSession(session.value);
 
   return {
     get account() {
@@ -44,7 +49,7 @@ export async function createAdminClient() {
     },
     get storage() {
       return new Storage(client);
-    }
+    },
   };
 }
 export async function signUpWithGoogle() {

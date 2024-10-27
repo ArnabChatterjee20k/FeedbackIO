@@ -10,6 +10,16 @@ appwrite push <element>
 
 5. For functions follow this https://appwrite.io/docs/products/functions/develop#request
 6. Also paste the env in the fuction environt variables
+
+### Implementing SSO and extending it
+1. Basically for auth required spaces , we need to authenticate users
+2. So if server is telling the widget is not authenticated then widget is redicting to `/api/identity?next=<redirectURI>` endpoint
+3. Here searchParams next is telling the redirect uri
+4. Then at /api/identity we are authenticating the user with oauth by getting creating a redirect oauth url using appwrite and redirecting it to that generated url. Now here we are provide success url(if google is authentication is succesfull) and failure case which is redirection to the original site
+5. In success case, we are redirecting again /identity/oauth?next=<>&userId=<>&secret=<> . Here we are creating the session.
+6. Then again redirecting to the ?next site with token search param. http//nextsite?token=<> which can be a frontend or the backend
+7. In the frontend, the client is reading the token and saving it to the local storage. And with every request to the /api/feedback the token is sent to authenticate and accordinly settings are sent.
+8. If we want them to automatically get logged at the feedbackso main site, then we can set the cookie before redirection to the next site like we are doing in the main app.
 ### Decisions
 1. Creating separate schemas for each instead of clubbing them together.
     Pros - Collection level query will be fast
