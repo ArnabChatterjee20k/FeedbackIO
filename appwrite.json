@@ -434,6 +434,22 @@
                     "array": false,
                     "size": 50,
                     "default": null
+                },
+                {
+                    "key": "url",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null
+                },
+                {
+                    "key": "contentImage",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 2000,
+                    "default": null
                 }
             ],
             "indexes": []

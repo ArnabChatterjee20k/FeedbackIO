@@ -20,6 +20,12 @@ appwrite push <element>
 6. Then again redirecting to the ?next site with token search param. http//nextsite?token=<> which can be a frontend or the backend
 7. In the frontend, the client is reading the token and saving it to the local storage. And with every request to the /api/feedback the token is sent to authenticate and accordinly settings are sent.
 8. If we want them to automatically get logged at the feedbackso main site, then we can set the cookie before redirection to the next site like we are doing in the main app.
+
+### Why not appwrite-functions for scraping service?
+I started with this only cause it's simple. Events published -> scrapers consumed -> operation -> updated
+But appwrite function literally didn't work for scrapers may be due to the level abstraction it is running on. Headless browsers drivers not found and custom downloading script also failed to download them during the runtime. Even if downloaded path issues are coming.
+I trited the approach I did in vercel functions by downloading custom binaries to mitigate  size of functions but it also failed.
+So going with trigger dot dev for running workers.
 ### Decisions
 1. Creating separate schemas for each instead of clubbing them together.
     Pros - Collection level query will be fast
