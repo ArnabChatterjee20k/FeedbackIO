@@ -418,6 +418,30 @@
                     "array": false,
                     "size": 20,
                     "default": null
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "672115590023ed35e867",
+            "$permissions": [
+                "create(\"users\")",
+                "read(\"users\")",
+                "update(\"users\")",
+                "delete(\"users\")"
+            ],
+            "databaseId": "670f600400337e01d085",
+            "name": "social-integration",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "space_id",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 20,
+                    "default": null
                 },
                 {
                     "key": "userProfilePicture",
@@ -428,9 +452,9 @@
                     "default": null
                 },
                 {
-                    "key": "feedbackType",
+                    "key": "type",
                     "type": "string",
-                    "required": false,
+                    "required": true,
                     "array": false,
                     "size": 50,
                     "default": null
@@ -438,9 +462,17 @@
                 {
                     "key": "url",
                     "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 3000,
+                    "default": null
+                },
+                {
+                    "key": "content",
+                    "type": "string",
                     "required": false,
                     "array": false,
-                    "size": 100,
+                    "size": 3500,
                     "default": null
                 },
                 {
@@ -449,6 +481,14 @@
                     "required": false,
                     "array": false,
                     "size": 2000,
+                    "default": null
+                },
+                {
+                    "key": "tag",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 650,
                     "default": null
                 }
             ],
@@ -506,6 +546,36 @@
             "entrypoint": "src/main.py",
             "commands": "pip install -r requirements.txt",
             "path": "functions/delete-images"
+        },
+        {
+            "$id": "6720ff33002c623ef3b3",
+            "name": "linkedin-scraper",
+            "runtime": "python-3.9",
+            "execute": [
+                "any"
+            ],
+            "events": [
+                "databases.670f600400337e01d085.collections.672115590023ed35e867.documents.*.create"
+            ],
+            "scopes": [
+                "databases.read",
+                "databases.write",
+                "collections.read",
+                "collections.write",
+                "attributes.read",
+                "attributes.write",
+                "indexes.read",
+                "indexes.write",
+                "documents.read",
+                "documents.write"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "src/main.py",
+            "commands": "pip install -r requirements.txt",
+            "path": "functions/linkedin-scraper"
         }
     ]
 }
