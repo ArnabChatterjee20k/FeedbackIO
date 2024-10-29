@@ -1,10 +1,10 @@
 import { AppwriteException, Models} from "node-appwrite";
-import { createSessionClient } from "../appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { DB_ID, LANDING_PAGE_COL_ID } from "./config";
 import { SERVER_FETCH_RESPONSE } from "./types";
 import { type LandingSectionProps } from "@/components/landing-page";
 export default async function getLandingPage(space_id: string):Promise<SERVER_FETCH_RESPONSE< LandingSectionProps>> {
-  const { db } = await createSessionClient();
+  const { db } = await createAdminClient();
   try {
     const doc = await db.getDocument(DB_ID, LANDING_PAGE_COL_ID, space_id);
     return { success:true,docs:doc as LandingSectionProps & Models.Document ,message:"successful",status:200 };
