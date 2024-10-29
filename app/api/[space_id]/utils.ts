@@ -11,6 +11,11 @@ export async function getFeedbackCookie() {
 }
 
 export async function setFeedbackCookie() {
+  try {
+    
+  } catch (error) {
+    
+  }
   const jwt = await createJWT({ "feedback-status": "200" });
   const token = (await cookies()).set("feedback-so-token", jwt, {
     path: "/",

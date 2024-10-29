@@ -4,10 +4,19 @@ import Branding from "./branding";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import FeedbackForm from "./feedback-form";
 import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
+import { PropsWithChildren } from "react";
+import AuthDialog from "./auth-dialog";
+import FeedbbackGivenDialog from "./feedback-given-dialog";
 
 export type FeedbackFormProps = SpaceFormType["settingsSchema"];
 export type LandingSectionProps = SpaceFormType["landingPageSchema"] & {
   feedbackFormProps: FeedbackFormProps;
+};
+type EnvironmentProps = {
+  sharingEnvironment?: {
+    type: "auth" | "rate limit" | null;
+    success: boolean;
+  };
 };
 
 export default function LandingPage({
@@ -19,8 +28,9 @@ export default function LandingPage({
   primaryColor,
   buttonText,
   feedbackFormProps,
-  spaceId
-}: LandingSectionProps & {spaceId:string}) {
+  spaceId,
+  sharingEnvironment,
+}: LandingSectionProps & EnvironmentProps & { spaceId: string }) {
   return (
     <div className="min-h-screen w-full flex flex-col items-center p-6 bg-white">
       <section className="w-full max-w-4xl mx-auto px-4 py-4">
@@ -61,24 +71,54 @@ export default function LandingPage({
         ) : null}
 
         {/* Feedback Button */}
-        <div className="flex flex-col items-center justify-center mt-8 gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="default" size="lg" className=" w-full max-w-sm">
-                {buttonText}
-              </Button>
-            </DialogTrigger>
-            <Branding />
-            <DialogContent className="bg-transparent border-none">
-              <FeedbackForm
-                {...feedbackFormProps}
-                spaceDetails={{ logo, name, message }}
-                spaceId={spaceId}
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
+        {sharingEnvironment &&
+        !sharingEnvironment.success &&
+        sharingEnvironment.type === "auth" ? (
+          <AuthDialog buttonText={buttonText} />
+        ) : null}
+        {sharingEnvironment &&
+        !sharingEnvironment.success &&
+        sharingEnvironment.type === "rate limit" ? (
+          <FeedbbackGivenDialog buttonText={buttonText} />
+        ) : null}
+        {sharingEnvironment?.success && sharingEnvironment?.type === null ? (
+          <LandingPageDialogForFeedback buttonText={buttonText}>
+            <FeedbackForm
+              {...feedbackFormProps}
+              spaceDetails={{ logo, name, message }}
+              spaceId={spaceId}
+            />
+          </LandingPageDialogForFeedback>
+        ) : null}
       </section>
+    </div>
+  );
+}
+
+export function LandingPageDialogForFeedback({
+  buttonText,
+  nonTransparent,
+  children,
+}: PropsWithChildren & { buttonText: string; nonTransparent?: boolean }) {
+  return (
+    <div className="flex flex-col items-center justify-center mt-8 gap-2">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="default" size="lg" className=" w-full max-w-sm">
+            {buttonText}
+          </Button>
+        </DialogTrigger>
+        <Branding />
+        <DialogContent
+          className={
+            nonTransparent
+              ? "bg-white border-white"
+              : "bg-transparent border-none"
+          }
+        >
+          {children}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

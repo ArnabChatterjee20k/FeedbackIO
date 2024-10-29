@@ -52,12 +52,17 @@ export async function createAdminClient() {
     },
   };
 }
-export async function signUpWithGoogle() {
+export async function signUpWithGoogle(
+  nextURI?: string,
+  redirectToNextInCaseOfFailure?: string
+) {
   const { account } = await createAdminClient();
 
   const origin = headers().get("origin");
-  const successURL = `${origin}/oauth`;
-  const failureURL = `${origin}/login`;
+  const successURL = `${origin}/oauth${
+    nextURI ? `?next=${encodeURIComponent(nextURI)}` : ""
+  }`;
+  const failureURL = redirectToNextInCaseOfFailure || `${origin}/login`;
   const redirectUrl = await account.createOAuth2Token(
     OAuthProvider.Google,
     successURL,

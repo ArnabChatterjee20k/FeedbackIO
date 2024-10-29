@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get("userId");
   const secret = request.nextUrl.searchParams.get("secret");
-
+  const next = request.nextUrl.searchParams.get("next");
   const { account } = await createAdminClient();
   const session = await account.createSession(userId!, secret!);
   // needs to be awaited otherwise not working
@@ -16,6 +16,6 @@ export async function GET(request: NextRequest) {
     secure: true,
     maxAge: 365 * 24 * 60 * 60 * 1000, // 1 day in milliseconds
   });
-  const response = NextResponse.redirect(`${request.nextUrl.origin}/dashboard`);
-  return response;
+  if (next) return NextResponse.redirect(decodeURIComponent(next));
+  return NextResponse.redirect(`${request.nextUrl.origin}/dashboard`);
 }

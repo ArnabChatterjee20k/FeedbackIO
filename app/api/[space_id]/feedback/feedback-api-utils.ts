@@ -6,12 +6,13 @@ import {
   type FeedbackGivenCheckParams,
 } from "@/lib/server/db/feedback";
 import { getUser } from "@/lib/server/utils";
-interface VALIDATION_RESPONSE {
+import { cookies } from "next/headers";
+export interface VALIDATION_RESPONSE {
   success: boolean;
   message: string;
   status: number;
   settings?: Record<string, boolean>;
-  type?: string;
+  type?: "auth"|"rate limit";
   userEmail?:string,
   userID?:string
 }
@@ -52,7 +53,8 @@ export async function validateUserForGivingFeedback(
   let userEmail = ""
   let userID = ""
   if (authEnabledReview) {
-    const user = await checkAuth(token as string);
+    // making it a universal function for checking authentication with external widget providing token
+    const user = await checkAuth(token || cookies().get(process.env.NEXT_SESSION_COOKIE!)?.value as string);
     if (!user)
       return {
         status: 400,
@@ -65,17 +67,18 @@ export async function validateUserForGivingFeedback(
     userID = user.$id
   }
   if (ipEnabledReview) checks["ip"] = userIP;
-
+  
   const given = await isFeedbackGivenByTheUser({ checks });
-  if (given){
-    await setFeedbackCookie()
-    return {
-      status: 400,
-      success: false,
-      message: "Already feedback given",
-      type: "rate limit",
-    };
-  }
+
+    if (given){
+      // await setFeedbackCookie()
+      return {
+        status: 400,
+        success: false,
+        message: "Already feedback given",
+        type: "rate limit",
+      };
+    }
 
   return {
     success: true,
