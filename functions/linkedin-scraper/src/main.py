@@ -29,7 +29,8 @@ def main(context):
             db = Databases(client)
             db.update_document(db_id,col_id,doc_id,{"content":content,"name":name,"userProfilePicture":profile_picture,"tag":tag})
             context.log("completed")
-        context.log("not linkedin")
+        else:
+            context.log("not linkedin")
     except AppwriteException as err:
         context.error("Some error occured: " + repr(err))
 

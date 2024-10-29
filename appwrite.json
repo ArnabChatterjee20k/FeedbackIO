@@ -490,6 +490,14 @@
                     "array": false,
                     "size": 650,
                     "default": null
+                },
+                {
+                    "key": "name",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 300,
+                    "default": null
                 }
             ],
             "indexes": []
