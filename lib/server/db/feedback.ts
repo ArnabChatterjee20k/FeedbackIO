@@ -1,6 +1,6 @@
 import { AppwriteException, ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
-import { DB_ID, FEEDBACK_COL_ID } from "./config";
+import { DB_ID, FEEDBACK_COL_ID, SOCIAL_COL_ID, SPACES_COL_ID } from "./config";
 import { getSettings } from "./settings";
 import { SERVER_RESPONSE } from "./types";
 
@@ -96,11 +96,11 @@ export async function getAllFeedbacks({
   limit = 25
 }: FeedbackQueryParams): Promise<FeedbackResponse> {
   try {
-    const { db, account } = await createSessionClient();
+    const { db } = await createSessionClient();
     const queryConditions = [Query.equal("space_id", space_id)];
 
     if (typeof liked === 'boolean') {
-      queryConditions.push(Query.equal("liked", liked));
+      queryConditions.push(Query.equal("wall_of_fame", liked));
     }
     
     const finalQuery = [
@@ -133,4 +133,22 @@ export async function getAllFeedbacks({
     }
     throw new Error('Failed to fetch feedbacks');
   }
+}
+
+interface SocialFeedbackProps{
+  type:"linkedin"|"twitter"|"all",
+  wallOfFame?:boolean,
+  spaceId:string
+}
+export async function getSocialFeedbacks({type,spaceId,wallOfFame}:SocialFeedbackProps){
+  const {db} = await createSessionClient()
+  const queries = [Query.equal("space_id",spaceId)]
+  if(type!=="all"){
+    queries.push(Query.equal("type",type))
+  }
+  if(wallOfFame){
+    queries.push(Query.equal("wall_of_fame",true))
+  }
+  const data = await db.listDocuments(DB_ID,SOCIAL_COL_ID,queries)
+  return data.documents
 }
