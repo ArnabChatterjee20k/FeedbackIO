@@ -1,5 +1,5 @@
 // @ts-ignore
 import gradient from "random-gradient";
-export default function GraidentAvatar({ id }: { id: string }) {
-  return <div className="aspect-square size-8 rounded-lg" style={{ background: gradient(id) }} />;
+export default function GraidentAvatar({ id , fullRound}: { id: string,fullRound?:boolean }) {
+  return <div className={`aspect-square size-8 ${fullRound?"rounded-lg":"rounded-full"}`} style={{ background: gradient(id) }} />;
 }
