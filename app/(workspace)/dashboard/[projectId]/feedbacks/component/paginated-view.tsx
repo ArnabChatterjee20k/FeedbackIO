@@ -23,15 +23,9 @@ export default function PaginatedView({ children, isNext, baseLink }: PaginatedV
 
   const getVisiblePages = () => {
     const pages = [];
-    const maxPages = isNext ? currentPage + 1 : currentPage; // +1 if isNext is true
-
-    // Show up to 5 pages total
-    const start = Math.max(1, currentPage - 2);
-    const end = Math.min(maxPages + 2, currentPage + 2); // Adjust to show one more page if isNext is true
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
+    if (currentPage > 1) pages.push(currentPage - 1); // Previous page
+    pages.push(currentPage); // Current page
+    if (isNext) pages.push(currentPage + 1); // Next page only if there's a next page
 
     return pages;
   };
@@ -49,8 +43,6 @@ export default function PaginatedView({ children, isNext, baseLink }: PaginatedV
   };
 
   const visiblePages = getVisiblePages();
-  const showFirstPage = currentPage > 3;
-  const showLastPage = isNext && currentPage < visiblePages[visiblePages.length - 1] - 1;
 
   return (
     <main className="container mx-auto py-8">
@@ -69,17 +61,6 @@ export default function PaginatedView({ children, isNext, baseLink }: PaginatedV
             </button>
           </PaginationItem>
 
-          {showFirstPage && (
-            <>
-              <PaginationItem>
-                <button onClick={() => handleNavigation(1, false)} className="inline-flex">
-                  <PaginationLink className="cursor-pointer">1</PaginationLink>
-                </button>
-              </PaginationItem>
-              {currentPage > 4 && <PaginationEllipsis />}
-            </>
-          )}
-
           {visiblePages.map((page) => (
             <PaginationItem key={page}>
               <button 
@@ -88,29 +69,13 @@ export default function PaginatedView({ children, isNext, baseLink }: PaginatedV
               >
                 <PaginationLink
                   isActive={page === currentPage}
-                  className={`cursor-pointer ${page === currentPage ? "font-bold text-blue-600" : ""}`} // Adjust styles for active page
+                  className={`cursor-pointer ${page === currentPage ? "font-bold text-blue-600" : ""}`}
                 >
                   {page}
                 </PaginationLink>
               </button>
             </PaginationItem>
           ))}
-
-          {showLastPage && (
-            <>
-              <PaginationEllipsis />
-              <PaginationItem>
-                <button 
-                  onClick={() => handleNavigation(visiblePages[visiblePages.length - 1] + 1, false)}
-                  className="inline-flex"
-                >
-                  <PaginationLink className="cursor-pointer">
-                    {visiblePages[visiblePages.length - 1] + 1}
-                  </PaginationLink>
-                </button>
-              </PaginationItem>
-            </>
-          )}
 
           <PaginationItem>
             <button
