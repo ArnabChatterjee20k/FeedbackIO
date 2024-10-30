@@ -3,27 +3,28 @@ import SocialCard from "../../components/social-card";
 import Empty from "@/components/empty";
 import { ImportDialog } from "../../components/ImportDialog";
 import { cn } from "@/lib/utils";
+
 export default async function page({
   params,
 }: {
   params: { projectId: string };
 }) {
   const feedbacks = await getSocialFeedbacks({
-    type: "twitter",
+    type: "linkedin",
     spaceId: params.projectId,
   });
   if (!feedbacks) return <h1>Some error occured</h1>;
   if (!feedbacks.length) {
     return (
       <Empty>
-        Import public tweets
-        <ImportDialog platform="twitter"/>
+        Import public linkedin posts
+        <ImportDialog platform="linkedin"/>
       </Empty>
     );
   }
   return (
     <div className="space-y-6">
-      <ImportDialog filled platform="twitter"/>
+      <ImportDialog filled platform="linkedin"/>
       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
         {feedbacks.map((feedback) => (
           <div className="mb-3">
@@ -34,7 +35,7 @@ export default async function page({
               )}
               post={{
                 space_id: params.projectId,
-                type: "twitter",
+                type: "linkedin",
                 content: feedback.content,
                 userProfilePicture: feedback.userProfilePicture,
                 url: feedback.url,
