@@ -28,7 +28,8 @@ const Skeleton = ({
   );
 };
 
-const truncate = (str: string | null, length: number) => {
+const truncate = (str?: string | null, length?: number) => {
+  if(!length) return
   if (!str || str.length <= length) return str;
   return `${str.slice(0, length - 3)}...`;
 };
@@ -98,7 +99,7 @@ const CardMedia = ({ post }: { post: SocialPost }) => (
       <img
         src={post.contentImage}
         alt={post.content || "Post image"}
-        className="h-64 w-full rounded-xl border object-cover shadow-sm"
+        className="h-40 w-full rounded-xl border object-cover shadow-sm"
       />
     </div>
   )
@@ -119,31 +120,14 @@ export const SocialMediaCard = ({ post, className }: SocialCardProps) => {
   );
 };
 
-const CardSkeleton = () => (
-  <div className="relative flex size-full max-w-lg flex-col gap-4 overflow-hidden rounded-lg border p-4">
-    <div className="flex items-center space-x-2">
-      <Skeleton className="size-12 rounded-full" />
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-40" />
-        <Skeleton className="h-3 w-32" />
-      </div>
-    </div>
-    <Skeleton className="h-20 w-full" />
-    <Skeleton className="h-64 w-full" />
-  </div>
-);
-
 export const SocialCard = ({
   post,
-  fallback = <CardSkeleton />,
   ...props
 }: SocialCardProps) => {
   if (!post) return null;
 
   return (
-    <Suspense fallback={fallback}>
       <SocialMediaCard post={post} {...props} />
-    </Suspense>
   );
 };
 

@@ -5,6 +5,7 @@ import { Twitter } from "../types";
 interface Payload {
   url: string;
   spaceId: string;
+  id:string
 }
 
 // with xpaths
@@ -39,14 +40,13 @@ export const scrapeTweetTask = task({
       const spaceId = payload.spaceId;
       await tasks.trigger("save-social-media-feedbacks", {
         spaceId,
+        id:payload.id,
         feedback: {
           userProfilePicture: userProfilePicture,
-          feedbackType: "twitter",
           userHandle,
           twitterContent,
           twitterContentImage,
           userName,
-          url,
         },
       });
     }

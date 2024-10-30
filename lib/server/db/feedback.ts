@@ -88,28 +88,27 @@ export interface FeedbackResponse {
   isNext: boolean;
 }
 
-
 export async function getAllFeedbacks({
   space_id,
   liked,
   page = 1,
-  limit = 25
+  limit = 25,
 }: FeedbackQueryParams): Promise<FeedbackResponse> {
   try {
     const { db } = await createSessionClient();
     const queryConditions = [Query.equal("space_id", space_id)];
 
-    if (typeof liked === 'boolean') {
+    if (typeof liked === "boolean") {
       queryConditions.push(Query.equal("wall_of_fame", liked));
     }
-    
+
     const finalQuery = [
-      queryConditions.length > 1 
+      queryConditions.length > 1
         ? Query.and(queryConditions)
         : queryConditions[0],
 
       Query.limit(limit + 1), // Get one extra to check for next page
-      Query.offset((page - 1) * limit)
+      Query.offset((page - 1) * limit),
     ];
 
     const response = await db.listDocuments(
@@ -122,33 +121,62 @@ export async function getAllFeedbacks({
     const hasNext = response.documents.length > limit;
 
     return {
-      documents: (response.documents.slice(0, limit) as unknown[]) as FeedbackAttributes[], // Remove the extra document
+      documents: response.documents.slice(
+        0,
+        limit
+      ) as unknown[] as FeedbackAttributes[], // Remove the extra document
       total: response.total,
-      isNext: hasNext
+      isNext: hasNext,
     };
-
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Failed to fetch feedbacks: ${error.message}`);
     }
-    throw new Error('Failed to fetch feedbacks');
+    throw new Error("Failed to fetch feedbacks");
   }
 }
 
-interface SocialFeedbackProps{
-  type:"linkedin"|"twitter"|"all",
-  wallOfFame?:boolean,
-  spaceId:string
+interface SocialFeedbackProps {
+  type: "linkedin" | "twitter" | "all";
+  wallOfFame?: boolean;
+  spaceId: string;
 }
-export async function getSocialFeedbacks({type,spaceId,wallOfFame}:SocialFeedbackProps){
-  const {db} = await createSessionClient()
-  const queries = [Query.equal("space_id",spaceId)]
-  if(type!=="all"){
-    queries.push(Query.equal("type",type))
+export async function getSocialFeedbacks({
+  type,
+  spaceId,
+  wallOfFame,
+}: SocialFeedbackProps) {
+  try {
+    const { db } = await createSessionClient();
+    const queries = [Query.equal("space_id", spaceId)];
+    if (type !== "all") {
+      queries.push(Query.equal("type", type));
+    }
+    if (wallOfFame) {
+      queries.push(Query.equal("wall_of_fame", true));
+    }
+    const data = await db.listDocuments(DB_ID, SOCIAL_COL_ID, queries);
+    return data.documents;
+  } catch {
+    return null;
   }
-  if(wallOfFame){
-    queries.push(Query.equal("wall_of_fame",true))
+}
+
+export async function addSocialLinkToQueue(
+  url: string,
+  space_id: string,
+  type: "twitter" | "linkedin"
+) {
+  try {
+    const { db } = await createSessionClient();
+    const doc = await db.createDocument(DB_ID, SOCIAL_COL_ID, ID.unique(), {
+      url,
+      space_id,
+      type,
+    });
+    return doc.$id;
+  } catch (error) {
+    console.error("error occured while adding social integration ",error)
+    return null;
   }
-  const data = await db.listDocuments(DB_ID,SOCIAL_COL_ID,queries)
-  return data.documents
 }
