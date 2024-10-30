@@ -54,7 +54,7 @@ const data = {
       items: [
         {
           title: "All",
-          url: "all",
+          url: "all/1",
         },
         {
           title: "Liked",

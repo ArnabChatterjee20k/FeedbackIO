@@ -9,14 +9,14 @@ export async function Feedbackcard({
   email,
   feedback,
   id,
-  wallOfFame
+  wallOfFame,
 }: {
   name?: string;
   stars?: number;
   email?: string;
   feedback: string;
-  id:string;
-  wallOfFame:boolean
+  id?: string;
+  wallOfFame: boolean;
 }) {
   return (
     <figure
@@ -38,9 +38,11 @@ export async function Feedbackcard({
             <p className="text-xs text-gray-500 dark:text-gray-400">{email}</p>
           ) : null}
         </div>
-        <span className="inline-block ml-auto">
-            <AddToWallOfFame id={id} wallOfFame={wallOfFame} type="feedback"/>
-        </span>
+        {id ? (
+          <span className="inline-block ml-auto">
+            <AddToWallOfFame id={id} wallOfFame={wallOfFame} type="feedback" />
+          </span>
+        ) : null}
       </div>
       {stars ? (
         <div

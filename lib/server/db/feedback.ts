@@ -81,7 +81,7 @@ interface FeedbackAttributes {
   userEmail?: string;
   space_id: string;
   $id: string;
-  wall_of_fame:boolean
+  wall_of_fame: boolean;
 }
 
 export interface FeedbackResponse {
@@ -149,7 +149,7 @@ export async function getSocialFeedbacks({
   wallOfFame,
 }: SocialFeedbackProps) {
   try {
-    const { db } = await createSessionClient();
+    const { db } = await createAdminClient();
     const queries = [Query.equal("space_id", spaceId)];
     if (type !== "all") {
       queries.push(Query.equal("type", type));
@@ -188,17 +188,31 @@ export async function toggleWallOfFame(
   type: "twitter" | "linkedin" | "feedback",
   wallOfFame: boolean
 ) {
-  console.log({type,id})
   try {
     const { db } = await createSessionClient();
     const colID = type === "feedback" ? FEEDBACK_COL_ID : SOCIAL_COL_ID;
     const doc = await db.updateDocument(DB_ID, colID, id, {
       wall_of_fame: wallOfFame,
     });
-    console.log({doc})
+    console.log({ doc });
     return doc.$id;
   } catch (error) {
     console.error("error occured while adding social integration ", error);
+    return null;
+  }
+}
+
+export async function getAllWallOfFameFeedbacks(space_id: string) {
+  try {
+    const { db } = await createAdminClient();
+    const doc = await db.listDocuments(DB_ID, FEEDBACK_COL_ID, [
+      Query.and([
+        Query.equal("wall_of_fame", true),
+        Query.equal("space_id", space_id),
+      ]),
+    ]);
+    return doc.documents;
+  } catch (error) {
     return null;
   }
 }

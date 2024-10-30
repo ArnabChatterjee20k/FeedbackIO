@@ -19,7 +19,6 @@ interface Props {
 export default function AddToWallOfFame({ id, type, wallOfFame }: Props) {
   const [isPending, startTransition] = useTransition();
   const path = usePathname();
-  console.log({path})
   async function handleToggle() {
     startTransition(async () => {
       await addToWallOfFame(id, type, !wallOfFame, path);
