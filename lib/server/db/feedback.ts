@@ -1,4 +1,4 @@
-import { AppwriteException, ID, Query } from "node-appwrite";
+import { AppwriteException, ID, Models, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { DB_ID, FEEDBACK_COL_ID, SOCIAL_COL_ID, SPACES_COL_ID } from "./config";
 import { getSettings } from "./settings";
@@ -80,6 +80,8 @@ interface FeedbackAttributes {
   feedback: string;
   userEmail?: string;
   space_id: string;
+  $id: string;
+  wall_of_fame:boolean
 }
 
 export interface FeedbackResponse {
@@ -176,7 +178,27 @@ export async function addSocialLinkToQueue(
     });
     return doc.$id;
   } catch (error) {
-    console.error("error occured while adding social integration ",error)
+    console.error("error occured while adding social integration ", error);
+    return null;
+  }
+}
+
+export async function toggleWallOfFame(
+  id: string,
+  type: "twitter" | "linkedin" | "feedback",
+  wallOfFame: boolean
+) {
+  console.log({type,id})
+  try {
+    const { db } = await createSessionClient();
+    const colID = type === "feedback" ? FEEDBACK_COL_ID : SOCIAL_COL_ID;
+    const doc = await db.updateDocument(DB_ID, colID, id, {
+      wall_of_fame: wallOfFame,
+    });
+    console.log({doc})
+    return doc.$id;
+  } catch (error) {
+    console.error("error occured while adding social integration ", error);
     return null;
   }
 }

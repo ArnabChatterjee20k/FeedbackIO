@@ -8,11 +8,15 @@ export async function Feedbackcard({
   stars,
   email,
   feedback,
+  id,
+  wallOfFame
 }: {
   name?: string;
   stars?: number;
   email?: string;
   feedback: string;
+  id:string;
+  wallOfFame:boolean
 }) {
   return (
     <figure
@@ -35,7 +39,7 @@ export async function Feedbackcard({
           ) : null}
         </div>
         <span className="inline-block ml-auto">
-            <AddToWallOfFame/>
+            <AddToWallOfFame id={id} wallOfFame={wallOfFame} type="feedback"/>
         </span>
       </div>
       {stars ? (

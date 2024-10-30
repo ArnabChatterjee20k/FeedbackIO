@@ -17,13 +17,13 @@ export default async function page({
     return (
       <Empty>
         Import public tweets
-        <ImportDialog platform="twitter"/>
+        <ImportDialog platform="twitter" />
       </Empty>
     );
   }
   return (
     <div className="space-y-6">
-      <ImportDialog filled platform="twitter"/>
+      <ImportDialog filled platform="twitter" />
       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
         {feedbacks.map((feedback) => (
           <div className="mb-3">
@@ -42,6 +42,7 @@ export default async function page({
                 name: feedback.name,
                 tag: feedback.tag,
                 wall_of_fame: feedback.wall_of_fame,
+                id: feedback.$id,
               }}
             />
           </div>

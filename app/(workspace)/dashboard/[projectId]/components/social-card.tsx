@@ -14,6 +14,7 @@ interface SocialPost {
   tag?: string;
   name?: string;
   wall_of_fame?: boolean;
+  id: string;
 }
 
 interface SocialCardProps {
@@ -80,7 +81,11 @@ const CardHeader = ({ post }: { post: SocialPost }) => (
       </div>
     </div>
     <div className="flex items-center -mt-1 gap-2">
-      <AddToWallOfFame />
+      <AddToWallOfFame
+        id={post.id}
+        type={post.type as "twitter" | "linkedin"}
+        wallOfFame={post.wall_of_fame as boolean}
+      />
       <Link href={post.url}>
         <span className="sr-only">View original post</span>
         <SocialIcon type={post.type} />
@@ -125,7 +130,7 @@ export const SocialMediaCard = ({ post, className }: SocialCardProps) => {
 
 export const SocialCard = ({ post, ...props }: SocialCardProps) => {
   if (!post) return null;
-
+  console.log({post})
   return <SocialMediaCard post={post} {...props} />;
 };
 

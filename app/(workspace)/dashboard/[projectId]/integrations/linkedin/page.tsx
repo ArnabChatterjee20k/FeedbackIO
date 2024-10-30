@@ -11,7 +11,7 @@ export default async function page({
 }) {
   const feedbacks = await getSocialFeedbacks({
     type: "linkedin",
-    spaceId: params.projectId,
+    spaceId: params.projectId
   });
   if (!feedbacks) return <h1>Some error occured</h1>;
   if (!feedbacks.length) {
@@ -43,6 +43,7 @@ export default async function page({
                 name: feedback.name,
                 tag: feedback.tag,
                 wall_of_fame: feedback.wall_of_fame,
+                id:feedback.$id
               }}
             />
           </div>
