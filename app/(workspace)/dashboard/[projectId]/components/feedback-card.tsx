@@ -1,8 +1,9 @@
 import { Star } from "lucide-react";
 import { cn, generateSecret } from "@/lib/utils";
 import GraidentAvatar from "@/components/graident-avatar";
+import AddToWallOfFame from "./add-to-wall-of-flame";
 
-export function Feedbackcard({
+export async function Feedbackcard({
   name,
   stars,
   email,
@@ -33,6 +34,9 @@ export function Feedbackcard({
             <p className="text-xs text-gray-500 dark:text-gray-400">{email}</p>
           ) : null}
         </div>
+        <span className="inline-block ml-auto">
+            <AddToWallOfFame/>
+        </span>
       </div>
       {stars ? (
         <div
