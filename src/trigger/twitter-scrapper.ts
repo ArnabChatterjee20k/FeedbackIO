@@ -88,6 +88,7 @@ async function scrapeTwitter(url: string): Promise<Partial<Twitter> | null> {
       userHandle: userHandle as string,
       url,
       userName: userName as string,
+      feedbackType:"twitter"
     };
 
     logger.log(JSON.stringify({ message: data }));

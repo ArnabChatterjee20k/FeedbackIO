@@ -54,8 +54,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@trigger.dev/sdk':
-        specifier: ^3.0.13
-        version: 3.0.13
+        specifier: 3.1.0
+        version: 3.1.0
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6
@@ -160,8 +160,8 @@ importers:
         version: 3.23.8
     devDependencies:
       '@trigger.dev/build':
-        specifier: ^3.0.13
-        version: 3.0.13(typescript@5.6.3)
+        specifier: 3.1.0
+        version: 3.1.0(typescript@5.6.3)
       tsx:
         specifier: ^4.19.1
         version: 4.19.1
@@ -186,6 +186,9 @@ packages:
 
   '@drizzle-team/brocli@0.10.1':
     resolution: {integrity: sha512-AHy0vjc+n/4w/8Mif+w86qpppHuF3AyXbcWW+R/W7GNA3F5/p2nuhlkCJaTXSLZheB4l1rtHzOfr9A7NwoR/Zg==}
+
+  '@electric-sql/client@0.6.3':
+    resolution: {integrity: sha512-/AYkRrEASKIGcjtNp8IVJ3sAUm+IQ2l0NrGgDvvAG/n1+ifOl7kD1E4dRyg1qdY/b+HdKhGNYlNgsPuwMKO2Mg==}
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
@@ -669,6 +672,9 @@ packages:
 
   '@js-sdsl/ordered-map@4.4.2':
     resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
+
+  '@jsonhero/path@1.0.21':
+    resolution: {integrity: sha512-gVUDj/92acpVoJwsVJ/RuWOaHyG4oFzn898WNGQItLCTQ+hOaVlEaImhwE1WqOTf+l3dGOUkbSiVKlb3q1hd1Q==}
 
   '@next/env@14.2.4':
     resolution: {integrity: sha512-3EtkY5VDkuV2+lNmKlbkibIJxcO4oIHEhBWne6PaAp+76J9KoSsGvNikp6ivzAT8dhhBMYrm6op2pS1ApG0Hzg==}
@@ -1343,6 +1349,11 @@ packages:
   '@radix-ui/rect@1.1.0':
     resolution: {integrity: sha512-A9+lCBZoaMJlVKcRBz2YByCG+Cp2t6nAnMnNba+XiWxnj6r4JUFqfsgwocMBZU9LPtdxC6wB56ySYpc7LQIoJg==}
 
+  '@rollup/rollup-darwin-arm64@4.24.3':
+    resolution: {integrity: sha512-QPW2YmkWLlvqmOa2OwrfqLJqkHm7kJCIMq9kOz40Zo9Ipi40kf9ONG5Sz76zszrmIZZ4hgRIkez69YnTHgEz1w==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
 
@@ -1355,16 +1366,16 @@ packages:
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
 
-  '@trigger.dev/build@3.0.13':
-    resolution: {integrity: sha512-4pN3KDl4Cn3qqTo5ZsV14NESjBzCV6h0Q9ZFBurq6BeposFflVyBtRQMCh5oUD+3YyGfq4RRlTP5Qz7iu00YXQ==}
+  '@trigger.dev/build@3.1.0':
+    resolution: {integrity: sha512-RfLLIosPN5bc+WZ3mrA0CCv73wAAeG9rAuVKppEyoapdZguXDKWONjBYzIpM9pp9yAXc+2qL1laihYZOVIk6fA==}
     engines: {node: '>=18.20.0'}
 
-  '@trigger.dev/core@3.0.13':
-    resolution: {integrity: sha512-BK4Yd+LrxA5cxAsO66yOm8UvBGdSplzfSqFGo6OpxhWZqZBsUMADAYBXhjb7ujl/F/BrN47qhLSuyaaybBiHcw==}
+  '@trigger.dev/core@3.1.0':
+    resolution: {integrity: sha512-Rq8Oa3fkevZLRd6yx6XqLe1jXYD41X1mN7O6R/pkaTXakPy6g44FvvlFw3XNi9TodrTG1m+ym1s7wR1Ydy+54A==}
     engines: {node: '>=18.20.0'}
 
-  '@trigger.dev/sdk@3.0.13':
-    resolution: {integrity: sha512-Ju+NDhwGJgnYuiotEWwcsG4dmN69XYjpkLLCPTMhMeGZgECUvXoduNC5avEIt6FyUqii3M67k/4jDgUIfa7UJg==}
+  '@trigger.dev/sdk@3.1.0':
+    resolution: {integrity: sha512-GxLw2aWa5Dk5wb9ZboE2l7k1iYEbnKUyfEZ4B96/B+npdYTR/BAZddMlOzNTr5YvAvgj4Bpf7aDcNrMjqAkWUA==}
     engines: {node: '>=18.20.0'}
 
   '@tsconfig/node10@1.0.11':
@@ -1648,6 +1659,10 @@ packages:
   degenerator@5.0.1:
     resolution: {integrity: sha512-TllpMR/t0M5sqCXfj85i4XaAzxmS5tVA16dqvdkMwGmzI+dXLXnw3J+3Vdv7VKw+ThlTMboK6i9rnZ6Nntj5CQ==}
     engines: {node: '>= 14'}
+
+  dequal@2.0.3:
+    resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
+    engines: {node: '>=6'}
 
   detect-node-es@1.1.0:
     resolution: {integrity: sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==}
@@ -2810,6 +2825,10 @@ snapshots:
 
   '@drizzle-team/brocli@0.10.1': {}
 
+  '@electric-sql/client@0.6.3':
+    optionalDependencies:
+      '@rollup/rollup-darwin-arm64': 4.24.3
+
   '@esbuild-kit/core-utils@3.3.2':
     dependencies:
       esbuild: 0.18.20
@@ -3095,6 +3114,8 @@ snapshots:
     optional: true
 
   '@js-sdsl/ordered-map@4.4.2': {}
+
+  '@jsonhero/path@1.0.21': {}
 
   '@next/env@14.2.4': {}
 
@@ -3774,6 +3795,9 @@ snapshots:
 
   '@radix-ui/rect@1.1.0': {}
 
+  '@rollup/rollup-darwin-arm64@4.24.3':
+    optional: true
+
   '@socket.io/component-emitter@3.1.2': {}
 
   '@swc/counter@0.1.3': {}
@@ -3785,9 +3809,9 @@ snapshots:
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
-  '@trigger.dev/build@3.0.13(typescript@5.6.3)':
+  '@trigger.dev/build@3.1.0(typescript@5.6.3)':
     dependencies:
-      '@trigger.dev/core': 3.0.13
+      '@trigger.dev/core': 3.1.0
       pkg-types: 1.2.1
       tinyglobby: 0.2.10
       tsconfck: 3.1.3(typescript@5.6.3)
@@ -3797,9 +3821,11 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@trigger.dev/core@3.0.13':
+  '@trigger.dev/core@3.1.0':
     dependencies:
+      '@electric-sql/client': 0.6.3
       '@google-cloud/precise-date': 4.0.0
+      '@jsonhero/path': 1.0.21
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/api-logs': 0.52.1
       '@opentelemetry/exporter-logs-otlp-http': 0.52.1(@opentelemetry/api@1.9.0)
@@ -3811,8 +3837,10 @@ snapshots:
       '@opentelemetry/sdk-trace-base': 1.25.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/sdk-trace-node': 1.25.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/semantic-conventions': 1.25.1
+      dequal: 2.0.3
       execa: 8.0.1
       humanize-duration: 3.32.1
+      jose: 5.9.4
       nanoid: 3.3.7
       socket.io-client: 4.7.5
       superjson: 2.2.1
@@ -3824,12 +3852,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@trigger.dev/sdk@3.0.13':
+  '@trigger.dev/sdk@3.1.0':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/api-logs': 0.52.1
       '@opentelemetry/semantic-conventions': 1.25.1
-      '@trigger.dev/core': 3.0.13
+      '@trigger.dev/core': 3.1.0
       chalk: 5.3.0
       cronstrue: 2.51.0
       debug: 4.3.7
@@ -4105,6 +4133,8 @@ snapshots:
       ast-types: 0.13.4
       escodegen: 2.1.0
       esprima: 4.0.1
+
+  dequal@2.0.3: {}
 
   detect-node-es@1.1.0: {}
 

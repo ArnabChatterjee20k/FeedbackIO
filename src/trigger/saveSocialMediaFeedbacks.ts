@@ -21,7 +21,7 @@ export const saveSocialMediaFeedbacks = task({
       content:twitterContent,
       space_id:spaceId,
       userProfilePicture,
-      feedbackType:feedbackType,
+      type:feedbackType,
       url,
       contentImage:twitterContentImage
     })
