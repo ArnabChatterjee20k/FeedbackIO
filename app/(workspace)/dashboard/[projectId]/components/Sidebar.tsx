@@ -42,46 +42,38 @@ import {
 import { Separator } from "../../../../../components/ui/separator";
 import { Space, User } from "../types/navTypes";
 import GraidentAvatar from "@/components/graident-avatar";
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const data = {
   navMain: [
     {
       title: "Feedbacks",
-      url: "#",
+      url: "feedbacks",
       icon: MessageSquareHeart,
       isActive: true,
       items: [
         {
+          title: "All",
+          url: "all",
+        },
+        {
           title: "Liked",
-          url: "#",
-        },
-        {
-          title: "Social Media",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
+          url: "liked",
         },
       ],
     },
     {
       title: "Integrations",
-      url: "#",
+      url: "integrations",
       icon: Workflow,
       items: [
         {
           title: "Twitter",
-          url: "#",
+          url: "twitter",
         },
         {
           title: "Linkedin",
-          url: "#",
-        },
-        {
-          title: "Add more",
-          url: "#",
+          url: "linkedin",
         },
       ],
     },
@@ -92,35 +84,30 @@ const data = {
     },
     {
       title: "Embed",
-      url: "#",
+      url: "embed",
       icon: Globe,
       items: [
         {
           title: "Wall of love",
-          url: "#",
+          url: "wall-of-love",
         },
         {
           title: "Feeback widget",
-          url: "#",
+          url: "feedback-widget",
         },
       ],
     },
   ],
-  preview: [
+  "Quick Links": [
     {
       name: "Landing Page",
-      url: "#",
+      url: "share/landing-page",
       icon: Frame,
     },
     {
       name: "Wall of fame",
-      url: "#",
+      url: "share/wall-of-love",
       icon: PieChart,
-    },
-    {
-      name: "Thank you page",
-      url: "#",
-      icon: Map,
     },
   ],
 };
@@ -131,6 +118,30 @@ export function AppSidebar({
   space,
   ...props
 }: React.ComponentProps<typeof Sidebar> & { user: User; space: Space }) {
+  const pathname = usePathname();
+  const [breadcrumbs, setBreadcrumbs] = React.useState<
+    { title: string; url: string }[]
+  >([]);
+  React.useEffect(() => {
+    const updateBreadcrumbs = () => {
+      // first two segments will be dashboard/id
+      // turning the id to the space name
+      const paths = pathname.split("/").filter(Boolean);
+      paths[1] = space.name
+      let currentPath = "";
+      const newBreadcrumbs = paths.map((path) => {
+        currentPath += `/${path}`;
+        const navItem = data.navMain.find((item) => item.url === path);
+        return {
+          title: navItem?.title || path,
+          url: currentPath,
+        };
+      });
+      setBreadcrumbs(newBreadcrumbs);
+    };
+
+    updateBreadcrumbs();
+  }, [pathname]);
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon" {...props}>
@@ -139,7 +150,7 @@ export function AppSidebar({
         </SidebarHeader>
         <SidebarContent>
           <NavMain items={data.navMain} />
-          <NavProjects projects={data.preview} />
+          <NavProjects projects={data["Quick Links"]} />
         </SidebarContent>
         <SidebarFooter>
           <NavUser
@@ -159,15 +170,20 @@ export function AppSidebar({
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumbs.map((crumb, index) => (
+                  <React.Fragment key={crumb.url}>
+                    {index > 0 && <BreadcrumbSeparator />}
+                    <BreadcrumbItem>
+                      {index === breadcrumbs.length - 1 ? (
+                        <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink>
+                          {crumb.title}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </React.Fragment>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

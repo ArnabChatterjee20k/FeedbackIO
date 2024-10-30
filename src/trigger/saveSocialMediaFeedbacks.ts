@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/server/appwrite";
-import { DB_ID, FEEDBACK_COL_ID } from "@/lib/server/db/config";
+import { DB_ID, FEEDBACK_COL_ID,SOCIAL_COL_ID } from "@/lib/server/db/config";
 import { addFeedback } from "@/lib/server/db/feedback";
 import { logger, task, wait } from "@trigger.dev/sdk/v3";
 import { ID } from "node-appwrite";
@@ -15,10 +15,10 @@ export const saveSocialMediaFeedbacks = task({
   run: async (payload: Payload, { ctx }) => {
     const {spaceId,feedback:{feedbackType,twitterContent,url,userHandle,userName,userProfilePicture,twitterContentImage}} = payload
     const {db} = await createAdminClient()
-    await db.createDocument(DB_ID,FEEDBACK_COL_ID,ID.unique(),{
+    await db.createDocument(DB_ID,SOCIAL_COL_ID,ID.unique(),{
       name:userName,
-      userID:userHandle,
-      feedback:twitterContent,
+      tag:userHandle,
+      content:twitterContent,
       space_id:spaceId,
       userProfilePicture,
       feedbackType:feedbackType,
