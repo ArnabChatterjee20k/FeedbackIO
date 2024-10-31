@@ -2,19 +2,12 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
   Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
   Settings2,
-  SquareTerminal,
   MessageSquareHeart,
   Workflow,
   Globe,
+  Flame
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -106,8 +99,8 @@ const data = {
     },
     {
       name: "Wall of fame",
-      url: "share/wall-of-love",
-      icon: PieChart,
+      url: "share/wall-of-fame",
+      icon: Flame,
     },
   ],
 };
@@ -127,7 +120,7 @@ export function AppSidebar({
       // first two segments will be dashboard/id
       // turning the id to the space name
       const paths = pathname.split("/").filter(Boolean);
-      paths[1] = space.name
+      paths[1] = space.name;
       let currentPath = "";
       const newBreadcrumbs = paths.map((path) => {
         currentPath += `/${path}`;
@@ -177,9 +170,7 @@ export function AppSidebar({
                       {index === breadcrumbs.length - 1 ? (
                         <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
                       ) : (
-                        <BreadcrumbLink>
-                          {crumb.title}
-                        </BreadcrumbLink>
+                        <BreadcrumbLink>{crumb.title}</BreadcrumbLink>
                       )}
                     </BreadcrumbItem>
                   </React.Fragment>
