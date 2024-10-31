@@ -29,5 +29,5 @@ export async function GET(
       new Date(b.$updatedAt).getTime() - new Date(a.$updatedAt).getTime()
   );
 
-  return NextResponse.json({feedbacks:combinedFeedbacks},{status:200});
+  return NextResponse.json({feedbacks:combinedFeedbacks});
 }
