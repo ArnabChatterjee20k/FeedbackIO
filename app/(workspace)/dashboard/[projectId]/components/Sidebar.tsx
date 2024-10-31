@@ -81,8 +81,8 @@ const data = {
       icon: Globe,
       items: [
         {
-          title: "Wall of love",
-          url: "wall-of-love",
+          title: "Wall of fame",
+          url: "wall-of-fame",
         },
         {
           title: "Feeback widget",
