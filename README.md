@@ -1,3 +1,4 @@
+Built during the appwrite hackathon 2024. And thanks to all the users , I won the hackathon.
 ### Running the app locally
 1. Storage -> Make sure to add permission for both the any and all user
 2. Run either the script(if you wanna husstle that I did) or you can use the appwrite cli and the appwrite json file.
