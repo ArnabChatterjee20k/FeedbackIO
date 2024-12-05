@@ -7,7 +7,7 @@ import {
   MessageSquareHeart,
   Workflow,
   Globe,
-  Flame
+  Flame,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -109,8 +109,13 @@ export function AppSidebar({
   children,
   user,
   space,
+  mainUrl,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { user: User; space: Space }) {
+}: React.ComponentProps<typeof Sidebar> & {
+  user: User;
+  space: Space;
+  mainUrl: string;
+}) {
   const pathname = usePathname();
   const [breadcrumbs, setBreadcrumbs] = React.useState<
     { title: string; url: string }[]
@@ -142,7 +147,7 @@ export function AppSidebar({
           <TeamSwitcher teams={[space]} />
         </SidebarHeader>
         <SidebarContent>
-          <NavMain items={data.navMain} />
+          <NavMain items={data.navMain} mainUrl={mainUrl}/>
           <NavProjects projects={data["Quick Links"]} />
         </SidebarContent>
         <SidebarFooter>

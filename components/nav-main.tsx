@@ -20,6 +20,7 @@ import Link from "next/link";
 
 export function NavMain({
   items,
+  mainUrl,
 }: {
   items: {
     title: string;
@@ -31,6 +32,7 @@ export function NavMain({
       url: string;
     }[];
   }[];
+  mainUrl: string;
 }) {
   const params = useParams();
   const { projectId } = params;
@@ -38,13 +40,13 @@ export function NavMain({
 
   const isMainItemActive = (itemUrl: string) => {
     return (
-      pathname === `/dashboard/${projectId}/${itemUrl}` ||
-      pathname.startsWith(`/dashboard/${projectId}/${itemUrl}/`)
+      pathname === `${mainUrl}/${itemUrl}` ||
+      pathname.startsWith(`${mainUrl}/${itemUrl}/`)
     );
   };
 
   const isSubItemActive = (mainItemUrl: string, subItemUrl: string) => {
-    return pathname === `/dashboard/${projectId}/${mainItemUrl}/${subItemUrl}`;
+    return pathname === `${mainUrl}/${mainItemUrl}/${subItemUrl}`;
   };
 
   return (
@@ -85,10 +87,7 @@ export function NavMain({
                       </>
                     </SidebarMenuButton>
                   ) : (
-                    <Link
-                      href={`/dashboard/${projectId}/${item.url}`}
-                      className="w-full"
-                    >
+                    <Link href={`${mainUrl}/${item.url}`} className="w-full">
                       <SidebarMenuButton
                         tooltip={item.title}
                         isActive={mainItemActive}
@@ -123,7 +122,7 @@ export function NavMain({
                               isActive={subItemActive}
                             >
                               <Link
-                                href={`/dashboard/${projectId}/${item.url}/${subItem.url}`}
+                                href={`${mainUrl}/${item.url}/${subItem.url}`}
                                 className={`w-full ${
                                   subItemActive
                                     ? "text-primary font-medium"
