@@ -33,7 +33,7 @@ export default function SpaceModal({ children }: PropsWithChildren) {
       toast.error("Error happend while creating your space", {
         description: message,
         dismissible: true,
-        duration: 2000,
+        duration: 10000,
       });
     });
   }

@@ -94,7 +94,7 @@ export default function Space({ spaceId }: Props) {
             errorsSend.forEach((error) => {
               toast.error(`Error occured in ${key}`, {
                 description: error,
-                duration: 4000,
+                duration: 10000,
               });
             });
           });

@@ -16,7 +16,7 @@ export const landingPageFieldschema = z.object({
   name: z
     .string()
     .min(1, "Space name is required")
-    .max(20, "Within 20 characters")
+    .max(100, "Within 100 characters")
     .default("Space name"),
   message: z
     .string()
