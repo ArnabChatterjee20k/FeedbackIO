@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Branding from "./branding";
-import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
+import { SpaceFormType } from "@/app/(workspace)/space/[projectId]/settings/schema";
 import { submitFeedback } from "@/lib/common/submitFeedback";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter, useParams } from "next/navigation";

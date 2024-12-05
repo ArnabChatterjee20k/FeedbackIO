@@ -34,14 +34,12 @@ export function NavMain({
   }[];
   mainUrl: string;
 }) {
-  const params = useParams();
-  const { projectId } = params;
   const pathname = usePathname();
-
   const isMainItemActive = (itemUrl: string) => {
     return (
       pathname === `${mainUrl}/${itemUrl}` ||
-      pathname.startsWith(`${mainUrl}/${itemUrl}/`)
+      pathname.startsWith(`${mainUrl}/${itemUrl}/`) ||
+      pathname + "/" === `${mainUrl}/${itemUrl}`
     );
   };
 

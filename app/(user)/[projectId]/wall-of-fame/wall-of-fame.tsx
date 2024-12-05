@@ -1,6 +1,6 @@
 export const revalidate = 2 * 3600; // 2 hours
-import { Feedbackcard } from "@/app/(workspace)/dashboard/[projectId]/components/feedback-card";
-import SocialCard from "@/app/(workspace)/dashboard/[projectId]/components/social-card";
+import { Feedbackcard } from "@/app/(workspace)/space/[projectId]/components/feedback-card";
+import SocialCard from "@/app/(workspace)/space/[projectId]/components/social-card";
 import {
   getAllWallOfFameFeedbacks,
   getSocialFeedbacks,

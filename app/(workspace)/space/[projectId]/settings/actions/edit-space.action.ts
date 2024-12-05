@@ -89,7 +89,7 @@ export default async function createSpaceAction(
       };
     }
 
-    revalidatePath(`/dashboard/${spaceId}/settings`);
+    revalidatePath(`/space/${spaceId}/settings`);
 
     return {
       success: true,

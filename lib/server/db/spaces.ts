@@ -10,7 +10,7 @@ import {
   THANK_YOU_COL_ID,
 } from "./config";
 import { SERVER_RESPONSE } from "./types";
-import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
+import { SpaceFormType } from "@/app/(workspace)/space/[projectId]/settings/schema";
 import { getUser, rollback } from "../utils";
 
 export async function getSpaces(userId: string) {

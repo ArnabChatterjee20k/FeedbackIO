@@ -79,5 +79,5 @@ export default async function createDefaultSpaceAction(
       errors: [pageMessage],
     };
   }
-  return redirect(`/dashboard/${spaceDocId}`)
+  return redirect(`/space/${spaceDocId}`)
 }

@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/app/(workspace)/dashboard/[projectId]/components/Sidebar";
+import { AppSidebar } from "@/app/(workspace)/space/[projectId]/components/Sidebar";
 import { getUser } from "@/lib/server/utils";
 import { Space, User } from "./types/navTypes";
 import { getSpace } from "@/lib/server/db/spaces";
@@ -24,8 +24,9 @@ export default async function DashboardLayout({
     name: space.name,
     plan: "free",
   };
+  const mainUrl = `/space/${params.projectId}`;
   return (
-    <AppSidebar space={spaceDetails} user={userDetails}>
+    <AppSidebar mainUrl={mainUrl} space={spaceDetails} user={userDetails}>
       {children}
     </AppSidebar>
   );

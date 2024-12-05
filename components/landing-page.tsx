@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Branding from "./branding";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import FeedbackForm from "./feedback-form";
-import { SpaceFormType } from "@/app/(workspace)/dashboard/[projectId]/settings/schema";
+import { SpaceFormType } from "@/app/(workspace)/space/[projectId]/settings/schema";
 import { PropsWithChildren } from "react";
 import AuthDialog from "./auth-dialog";
 import FeedbbackGivenDialog from "./feedback-given-dialog";
