@@ -25,7 +25,6 @@ export default async function page({
   if (landingPageStatus === 404) return notFound();
   else if (!landingPageDocs || landingPageStatus === 500)
     return <h2>{landingPageResponseMessage}</h2>;
-
   const {
     name,
     buttonText,

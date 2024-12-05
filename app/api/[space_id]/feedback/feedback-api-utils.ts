@@ -39,17 +39,7 @@ export async function validateUserForGivingFeedback(
     starRatingRequired,
   } = docs;
 
-  if (ipEnabledReview || authEnabledReview) {
-    const feedbackToken = await getFeedbackCookie();
-    if (feedbackToken)
-      return {
-        status: 400,
-        success: false,
-        message: "Already feedback given",
-        type:"rate limit",
-      };
-  }
-  const checks: FeedbackGivenCheckParams["checks"] = {};
+  const checks: FeedbackGivenCheckParams["checks"] = {spaceId:spaceId};
   let userEmail = ""
   let userID = ""
   if (authEnabledReview) {

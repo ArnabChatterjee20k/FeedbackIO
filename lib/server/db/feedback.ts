@@ -41,18 +41,23 @@ export interface FeedbackGivenCheckParams {
   checks: {
     userID?: string;
     ip?: string;
+    spaceId: string;
   };
 }
 export async function isFeedbackGivenByTheUser({
-  checks: { userID, ip },
+  checks: { userID, ip, spaceId },
 }: FeedbackGivenCheckParams) {
   if (!userID && !ip) return false;
   const { db } = await createAdminClient();
   const queries = [];
   if (userID) queries.push(Query.equal("userID", userID));
   if (ip) queries.push(Query.equal("userIP", ip));
+  // check if both are userId and ip needs to be track then it will be an or operation -> if ip or id is present
+  // if only ip or only userId is present then no or required
+  const userQuery = queries.length > 1 ? Query.or(queries) : queries[0];
+  const spaceQuery = Query.equal("space_id", spaceId);
+  const finalQuery = [Query.and([spaceQuery, userQuery])];
 
-  const finalQuery = queries.length > 1 ? [Query.or(queries)] : queries;
   try {
     const feedbacks = await db.listDocuments(
       DB_ID,
@@ -61,6 +66,11 @@ export async function isFeedbackGivenByTheUser({
     );
     if (feedbacks.total > 0) return true;
   } catch (error) {
+    console.error("Error fetching feedback given or not ", {
+      userID,
+      ip,
+      spaceId,
+    });
     return true;
   }
 }
