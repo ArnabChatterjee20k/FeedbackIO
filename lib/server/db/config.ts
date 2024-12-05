@@ -6,3 +6,4 @@ export const SETTINGS_COL_ID = process.env.SETTINGS_COL_ID!
 export const NOTIFICATIONS_COL_ID = process.env.NOTIFICATIONS_COL_ID!
 export const FEEDBACK_COL_ID = process.env.FEEDBACK_COL_ID!
 export const SOCIAL_COL_ID = process.env.SOCIAL_COL_ID!
+export const EMBED_COL_ID = process.env.EMBED_COL_ID!

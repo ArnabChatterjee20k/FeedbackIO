@@ -110,9 +110,9 @@ export default function Component() {
         <div className="mt-12 md:mt-16 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 text-sm md:text-base text-gray-600 max-w-xl mx-auto">
           {[
             "Easy Integration",
-            "Real-time Analytics",
+            "Easy Embeddings",
             "Customizable Forms",
-            "AI-powered Insights",
+            "Social Media Imports",
           ].map((feature) => (
             <div
               key={feature}
