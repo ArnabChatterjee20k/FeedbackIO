@@ -38,6 +38,7 @@ export default function Space({ spaceId }: Props) {
         {...spaceState.landingPageSchema}
         feedbackFormProps={{ ...spaceState.settingsSchema }}
         spaceId={spaceId}
+        sharingEnvironment={{success:true,type:null}}
       />
     ),
     Settings: (
