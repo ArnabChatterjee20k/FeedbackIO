@@ -1,17 +1,14 @@
 export const dynamic = "force-dynamic";
 import { createAdminClient } from "@/lib/server/appwrite";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { OAuthProvider } from "node-appwrite";
-import * as dotenv from "dotenv";
-
-// Load environment variables
-dotenv.config();
 
 export async function GET(req: NextRequest) {
     const next = req.nextUrl.searchParams.get("next") || "/";    
     
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+        if(!baseUrl) return NextResponse.json({status:"some error occured"})
         
         const successURL = `${baseUrl}/api/identity/oauth?next=${encodeURIComponent(next)}`;
         const failureURL = `${baseUrl}/api/identity/oauth?next=${encodeURIComponent(next)}&error=true`;
