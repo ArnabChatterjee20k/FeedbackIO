@@ -61,8 +61,8 @@ export function AppSidebar({
           <NavUser
             user={{
               avatar: <GraidentAvatar id={user.email} />,
-              email: user.email,
-              name: user.name,
+              email: user?.email,
+              name: user?.name,
             }}
           />
         </SidebarFooter>
