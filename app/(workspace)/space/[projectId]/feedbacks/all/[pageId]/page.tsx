@@ -16,7 +16,7 @@ export default async function page({
     return (
       <PaginatedView
         isNext={feedbacks.isNext}
-        baseLink={`dashboard/${params.projectId}/feedbacks/all`}
+        baseLink={`space/${params.projectId}/feedbacks/all`}
       >
         <section className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
           {feedbacks.documents.map(
