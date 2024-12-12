@@ -18,6 +18,5 @@ export default async function (
     };
   });
   const permissionCreated = await createPermissions(members);
-  if (permissionCreated) return true;
-  return false;
+  return permissionCreated;
 }
