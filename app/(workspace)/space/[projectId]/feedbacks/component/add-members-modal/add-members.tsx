@@ -162,6 +162,7 @@ function UserListItem({
   setMembers: Dispatch<SetStateAction<UsersPermission[]>>;
 }) {
   const [isDeleteMemberPending, startDeleteTransition] = useTransition();
+
   function deleteMember(e: FormEvent) {
     e.preventDefault();
     startDeleteTransition(async () => {
@@ -176,35 +177,39 @@ function UserListItem({
         });
     });
   }
+
   return (
     <form onSubmit={deleteMember}>
-      <li
-        key={user_id}
-        className="flex items-center justify-between flex-wrap my-4"
-      >
-        <div className="flex gap-2 items-center">
+      <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 last:border-b-0">
+        <div className="flex items-center mb-3 sm:mb-0">
           <GraidentAvatar id={user_id} />
-          <span className="flex flex-col">
-            <span className="text-gray-600">{user_id}</span>
-            <p className="text-gray-500 text-xs">
+          <span className="flex flex-col ml-3">
+            <span className="text-sm font-medium text-gray-700">{user_id}</span>
+            <p className="text-xs text-gray-500">
               {permissions
                 .map((permission) => permission.toUpperCase())
-                .join(",")}
+                .join(", ")}
             </p>
           </span>
         </div>
-        <div className="flex items-center gap-1 flex-wrap">
+        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto mt-2 sm:mt-0">
           <Select>
-            <SelectTrigger className="w-min">Permissions</SelectTrigger>
+            <SelectTrigger className="w-32 text-sm">Permissions</SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">Read</SelectItem>
+              <SelectItem value="read">Read</SelectItem>
+              {/* Add other permission options as needed */}
             </SelectContent>
           </Select>
-          <Button type="submit" variant="ghost">
+          <Button 
+            type="submit" 
+            variant="ghost" 
+            size="icon"
+            className="ml-2"
+          >
             {isDeleteMemberPending ? (
-              <LoaderIcon className="animate-spin repeat-infinite" />
+              <LoaderIcon className="h-4 w-4 animate-spin" />
             ) : (
-              <TrashIcon color="red" size={20} />
+              <TrashIcon className="h-4 w-4 text-red-500" />
             )}
           </Button>
         </div>
