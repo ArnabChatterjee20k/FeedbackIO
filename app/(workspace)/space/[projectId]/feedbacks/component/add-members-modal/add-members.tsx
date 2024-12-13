@@ -2,6 +2,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -32,6 +33,7 @@ import Empty from "@/components/empty";
 import createPermissionAction from "../../actions/create-permission-action";
 import { toast, useToast } from "@/hooks/use-toast";
 import deletePermissionAction from "../../actions/delete-permission-action";
+import ShareButtons from "../../../components/share-buttons";
 
 // Currently the requirement is for READ permission only due to our event
 // TODO: if required just use the write permission from the enum
@@ -145,6 +147,9 @@ export default function AddMembers({
             </ul>
           </div>
         </DialogHeader>
+        <DialogFooter>
+          <ShareButtons url={`${process.env.NEXT_PUBLIC_SITE_URL}/${document_id}/share/feedback`} text="Share Wall of Fame"/>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
