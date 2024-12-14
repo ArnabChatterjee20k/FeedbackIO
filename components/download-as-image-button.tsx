@@ -20,20 +20,29 @@ export function DownloadAsImageButton({
     window.requestAnimationFrame(async () => {
       try {
         const actualWidth = element.offsetWidth;
-
-        const canvas = await html2canvas(element, {
-          scale: 7,
+        console.log({
           width: actualWidth,
           height: element.scrollHeight,
           windowWidth: actualWidth,
           windowHeight: element.scrollHeight,
+        });
+        const fixedDimensions = {
+          width: 1617,
+          height: 1466,
+          windowWidth: 1466,
+          windowHeight: 1617,
+        };
+        const canvas = await html2canvas(element, {
+          ...fixedDimensions,
+          scale: 7,
           useCORS: true,
           allowTaint: true,
           logging: true,
           onclone: (clonedDoc) => {
             const clonedElement = clonedDoc.getElementById("wall-of-fame");
             if (clonedElement) {
-              clonedElement.style.width = `${actualWidth}px`;
+              // clonedElement.style.width = `${actualWidth}px`;
+              clonedElement.style.width = `1617px`;
               clonedElement.style.columns = "4";
               clonedElement.style.columnGap = "1rem";
 
