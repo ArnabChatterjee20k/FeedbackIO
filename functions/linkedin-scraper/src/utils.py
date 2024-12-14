@@ -2,43 +2,33 @@ import requests
 from lxml import etree
 from bs4 import BeautifulSoup
 
-text_selectors = {
-    "content": "//article/div[3]/p",
-    "name": "//article/div[1]/div/div/a",
-    "profile_info": "//article/div[1]/div/p"
-}
-
-img_selectors = {
-    "profile_picture": "//article/div[1]/a/img",
-}
-
-def get_dom(url:str):
+def get_soup(url):
     res = requests.get(url)
     if not res.ok:
         return None
-    html = res.text
-    soup = BeautifulSoup(html,"lxml")
-    body = soup.find("body")
-    dom = etree.HTML(str(body))
-    return dom
+    return BeautifulSoup(res.text)
 
-
-def get_soup(element:etree.Element):
-    """
-        It will take the HTML element and wrap it with the html and body and give you a separate html.
-        To find an element inside it, make sure to find the tag or query it
-    """
-    return BeautifulSoup(etree.tostring(element),"lxml")
 
 def scrape(url:str):
-    dom = get_dom(url)
-    items = {}
-    for key,xpath in text_selectors.items():
-        element:etree.Element = dom.xpath(xpath)
-        items[key] = get_soup(element[0]).getText().strip()
+    soup = get_soup(url)
+    # Find the main layout using the data-test-id attribute
+    main_layout = soup.find(attrs={'data-test-id': 'main-feed-activity-card__entity-lockup'})
+    if not main_layout:
+        return None
+
+    image_url = main_layout.find('img')['data-delayed-url']
     
-    for key,xpath in img_selectors.items():
-        element:etree.Element = dom.xpath(xpath)
-        items[key] = get_soup(element[0]).find("img").get("data-delayed-url")
+    name = main_layout.find(attrs={'data-tracking-control-name': 'public_post_feed-actor-name'}).get_text().strip()
+    
+    profile_info = main_layout.find(attrs={'data-tracking-control-name': 'public_post_feed-actor-name'}).parent.find_next_sibling().get_text().strip()
+    
+    content = soup.find(attrs={"data-test-id":"main-feed-activity-card__commentary"}).get_text().strip()
+    
+    items = {
+        "profile_info":profile_info,
+        "name":name,
+        "profile_picture":image_url,
+        "content":content
+    }
     
     return items

@@ -20,7 +20,9 @@ def main(context):
     # currently running linkedin here only as twitter is running only through triggerdotdev
     try:
         if social_type == "linkedin":
-            data = scrape(url)
+            data = scrape(context,url)
+            if not data:
+                context.error("Markup changed in the linkedin scrapper")
             content = data.get("content")
             name = data.get("name")
             profile_picture = data.get("profile_picture")
