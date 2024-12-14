@@ -14,9 +14,11 @@ import { DownloadAsImageButton } from "@/components/download-as-image-button";
 export default function ShareButtons({
   url,
   text,
+  downloadImageSectionId,
 }: {
   url: string;
   text: string;
+  downloadImageSectionId?: string;
 }) {
   const copyToClipboard = () => {
     navigator.clipboard
@@ -30,7 +32,7 @@ export default function ShareButtons({
   };
   return (
     <div className="flex flex-wrap gap-2">
-      <DownloadAsImageButton />
+      {downloadImageSectionId ? <DownloadAsImageButton downloadImageSectionId={downloadImageSectionId}/> : null}
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">

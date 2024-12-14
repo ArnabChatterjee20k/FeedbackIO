@@ -6,6 +6,7 @@ export default function page({ params }: { params: { projectId: string } }) {
     <section className="flex flex-col">
       <div className="self-end mr-16">
         <ShareButtons
+          downloadImageSectionId={"wall-of-fame"}
           url={`${process.env.NEXT_SITE_URL}/${params.projectId}/wall-of-fame`}
           text="Share Wall of Fame"
         />
