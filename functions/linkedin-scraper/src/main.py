@@ -20,7 +20,7 @@ def main(context):
     # currently running linkedin here only as twitter is running only through triggerdotdev
     try:
         if social_type == "linkedin":
-            data = scrape(context,url)
+            data = scrape(url)
             if not data:
                 context.error("Markup changed in the linkedin scrapper")
             content = data.get("content")
@@ -33,7 +33,9 @@ def main(context):
             context.log("completed")
         else:
             context.log("not linkedin")
-    except AppwriteException as err:
+    except Exception as err:
+        db = Databases(client)
+        db.update_document(db_id,col_id,doc_id,{"error":True})
         context.error("Some error occured: " + repr(err))
 
     return context.res.json(

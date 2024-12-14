@@ -511,6 +511,13 @@
           "array": false,
           "size": 10,
           "default": false
+        },
+        {
+          "key": "error",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
         }
       ],
       "indexes": []

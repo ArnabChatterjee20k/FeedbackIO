@@ -43,7 +43,8 @@ export default async function page({
                 name: feedback.name,
                 tag: feedback.tag,
                 wall_of_fame: feedback.wall_of_fame,
-                id:feedback.$id
+                id:feedback.$id,
+                error:feedback.error
               }}
             />
           </div>

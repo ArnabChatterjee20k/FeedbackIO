@@ -15,6 +15,7 @@ interface SocialPost {
   name?: string;
   wall_of_fame?: boolean;
   id?: string;
+  error?: boolean;
 }
 
 interface SocialCardProps {
@@ -56,6 +57,12 @@ const CardHeader = ({ post }: { post: SocialPost }) => (
   <div className="flex flex-row justify-between tracking-tight">
     <div className="flex items-center space-x-2">
       <div>
+        {post.error ? (
+          <div className="text-red-500 font-bold">
+            <p>Some error occured while importing</p>
+            <p>Please re-import</p>
+          </div>
+        ) : null}
         {post.userProfilePicture ? (
           <img
             src={post.userProfilePicture || "/api/placeholder/48/48"}
@@ -65,10 +72,14 @@ const CardHeader = ({ post }: { post: SocialPost }) => (
             className="overflow-hidden rounded-full border border-transparent"
           />
         ) : (
-          <div className="flex items-center gap-3">
-            <Skeleton className="size-8 rounded-full animate-pulse" />
-            <p>Import going on...</p>
-          </div>
+          <>
+            {post.error ? null : (
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-8 rounded-full animate-pulse" />
+                <p>Import going on...</p>
+              </div>
+            )}
+          </>
         )}
       </div>
       <div>

@@ -152,6 +152,7 @@ interface SocialFeedbackProps {
   type: "linkedin" | "twitter" | "all";
   wallOfFame?: boolean;
   spaceId: string;
+  error?: boolean;
 }
 export async function getSocialFeedbacks({
   type,
