@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DownloadAsImageButton } from "@/components/download-as-image-button";
 export default function ShareButtons({
   url,
   text,
@@ -29,6 +30,7 @@ export default function ShareButtons({
   };
   return (
     <div className="flex flex-wrap gap-2">
+      <DownloadAsImageButton />
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">

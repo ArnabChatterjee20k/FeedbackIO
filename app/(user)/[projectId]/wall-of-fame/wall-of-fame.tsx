@@ -32,7 +32,7 @@ export default async function WallOfFame({
   );
 
   return (
-    <section className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <section id="wall-of-fame" className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 max-w-[1500px] mx-auto py-5">
         {combinedFeedbacks.map((feedback) => {
           return feedback?.type === "twitter" ||

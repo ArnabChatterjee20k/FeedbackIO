@@ -40,6 +40,7 @@
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.25.0",
     "drizzle-orm": "^0.34.1",
+    "html2canvas": "^1.4.1",
     "jose": "^5.9.4",
     "lucide-react": "^0.452.0",
     "next": "14.2.4",
