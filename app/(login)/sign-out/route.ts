@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-export function GET() {
-    cookies().delete(process.env.NEXT_SESSION_COOKIE!);
+import {signOut} from "@/lib/server/appwrite"
+export async function GET() {
+    await signOut()
     return redirect("/")
   }  
