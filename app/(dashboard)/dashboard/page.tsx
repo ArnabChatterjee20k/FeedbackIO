@@ -6,17 +6,26 @@ import { getSpaces } from "@/lib/server/db/spaces";
 import Empty from "../../../components/empty";
 import { PlusIcon } from "lucide-react";
 import SpaceModal from "../../(workspace)/space/[projectId]/settings/components/create-space-modal";
+import type { VideoBannerInterface } from "./components/banner";
 
 export default async function page() {
   const user = await getUser();
   const userId = user?.$id as string;
   const spaces = await getSpaces(userId);
 
+  const bannerInfo: VideoBannerInterface = {
+    url: "#",
+    mainText: "Have 5 mins?",
+    demoText: "Here's a quick demo 👉",
+    description:
+      "The demo includes an end-to-end demonstration of creating and collecting testimonials.",
+  };
+
   return (
     <div>
       <section className="py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
-          <Banner />
+          <Banner {...bannerInfo} />
         </div>
       </section>
       <section className="py-5">
@@ -37,9 +46,7 @@ export default async function page() {
                   logo={space.logo}
                   key={space.$id}
                   name={space.name}
-                  feedbacks={12}
-                  sentiment="POSITIVE"
-                  spaceId = {space.$id}
+                  url={`/space/${space.spaceId}/settings`}
                 />
               ))
             ) : (

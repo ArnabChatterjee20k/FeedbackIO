@@ -4,7 +4,8 @@ import * as React from "react";
 import {
   NotebookText,
   ChartColumnBig,
-  ChartNoAxesColumn
+  ChartNoAxesColumn,
+  BookTypeIcon
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -25,9 +26,15 @@ import GraidentAvatar from "@/components/graident-avatar";
 const data = {
   navMain: [
     {
-      title: "Spaces",
+      title: "Feedbacks-Space",
       url: "",
       icon: NotebookText,
+      isActive: true,
+    },
+    {
+      title: "Form-it",
+      url: "forms",
+      icon: BookTypeIcon,
       isActive: true,
     },
     {
