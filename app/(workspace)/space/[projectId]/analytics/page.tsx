@@ -6,6 +6,7 @@ import AreaChart, {
 
 import ChartCard from "@/components/analytics/ChartCard";
 import VerticalBarChart,{type VerticalBarChartData} from "@/components/analytics/VerticalBarChart";
+import { TabBasedChartCard } from "@/components/analytics/TabBasedChartCard";
 
 const data: AreaChartData[] = [
   { name: "2025-01-28", value: 33 },
@@ -18,6 +19,24 @@ const visitData:VerticalBarChartData[] = [
     {name:"wall-of-fame",value:40,fill:"#c5cae9"},
     {name:"feedback-submission",value:30,fill:"#ffcdd2"},
 ]
+const sampleData = [
+    {
+      category: "Short Links",
+      data: [
+        { name: "Google", value: 120 },
+        { name: "Facebook", value: 80 },
+        { name: "Twitter", value: 50 },
+      ],
+    },
+    {
+      category: "Destination URLs",
+      data: [
+        { name: "example.com", value: 200 },
+        { name: "mywebsite.io", value: 150 },
+        { name: "coolblog.net", value: 100 },
+      ],
+    },
+  ];
 export default function page() {
   return (
     <section className="flex flex-col max-w-[1400px] w-full mx-auto gap-5">
@@ -28,9 +47,7 @@ export default function page() {
         <ChartCard title="PageStatistics">
           <VerticalBarChart data={visitData} />
         </ChartCard>
-        <ChartCard title="Metadata">
-          <AreaChart data={data} />
-        </ChartCard>
+        <TabBasedChartCard data={sampleData}/>
       </div>
     </section>
   );

@@ -12,7 +12,7 @@ export default function ChartCard({
   return (
     <Card className="shadow-none rounded-md w-full">
       {title ? (
-        <CardHeader>
+        <CardHeader className="pb-1">
           <CardTitle>{title}</CardTitle>
         </CardHeader>
       ) : null}
