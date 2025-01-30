@@ -6,6 +6,8 @@ export interface VerticalBarChartData {
   name: string;
   value: number;
   fill: "#ffcdd2" | "#c5cae9" | "#bbdefb";
+  active?: boolean;
+  redirectionLink?: string;
 }
 
 export interface Props {
@@ -21,7 +23,14 @@ export default function VerticalBarChart({ data }: Props) {
   return (
     <div className="space-y-4">
       {data.map((stat) => (
-        <BarItem hover={true} key={stat.name} stat={stat} dataMax={dataMax} />
+        <BarItem
+          active={stat.active}
+          hover={true}
+          key={stat.name}
+          stat={stat}
+          dataMax={dataMax}
+          redirectionLink={stat.redirectionLink}
+        />
       ))}
     </div>
   );

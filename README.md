@@ -53,3 +53,7 @@ Queue col updated -> function for updating space,landingpage and deleting old fi
 1. Currently all pages and routes are totally dynamic and no caching getting done. So can be cached
 2. By using a domain, we can use apex domains to serve personalised pages
 3. Polls creation , form creation ,etc
+
+
+### Solving nextjs and trigger dot dev build issue
+https://github.com/triggerdotdev/trigger.dev/issues/1547
