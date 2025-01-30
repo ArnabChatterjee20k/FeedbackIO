@@ -64,12 +64,12 @@
     "tailwindcss": "^3.4.13",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-react-aria-components": "1.1.6",
-    "trigger.dev": "^3.3.12",
+    "trigger.dev": "^3.0.13",
     "typescript": "^5.6.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@trigger.dev/build": "3.3.7",
+    "@trigger.dev/build": "3.0.13",
     "tsx": "^4.19.1"
   }
 }
