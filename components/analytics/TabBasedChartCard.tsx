@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import BarItem from "./BarItem";
+import Loader from "@/app/(workspace)/space/[projectId]/analytics/loader";
 
 interface Data {
   category: string;
@@ -12,30 +13,37 @@ interface Data {
 
 interface TabBasedChartCardProps {
   data: Data[];
+  loading: boolean;
 }
 
-export function TabBasedChartCard({ data }: TabBasedChartCardProps) {
+export function TabBasedChartCard({ data, loading }: TabBasedChartCardProps) {
   const tabs = data.map(({ category }) => category);
-  const [activeTab, setActiveTab] = useState(data[0].category);
+  const [activeTab, setActiveTab] = useState(data[0]?.category);
 
   const activeIndex = tabs.indexOf(activeTab);
 
   const tabContent = useMemo(() => {
-    if (data.length === 0) {
+    if (data.length === 0 || loading) {
       return (
         <div className="flex items-center justify-center p-8 text-sm text-muted-foreground">
-          No data available
+          {loading ? <Loader/> : "No data available"}
         </div>
       );
     }
 
     const content = data.find(({ category }) => category === activeTab);
-    const highestValue = Math.max(...(content?.data?.map(({ value }) => value) || [1]));
+    const highestValue = Math.max(
+      ...(content?.data?.map(({ value }) => value) || [1])
+    );
 
     return (
       <div className="p-4 space-y-3">
         {content?.data?.map(({ name, value }) => (
-          <BarItem dataMax={highestValue} stat={{name,value,fill:"#bbdefb"}}/>
+          <BarItem
+            key={name}
+            dataMax={highestValue}
+            stat={{ name, value, fill: "#bbdefb" }}
+          />
         ))}
       </div>
     );
@@ -50,6 +58,7 @@ export function TabBasedChartCard({ data }: TabBasedChartCardProps) {
               <div key={tab} className="relative">
                 <button
                   onClick={() => setActiveTab(tab)}
+                  key={tab}
                   className="relative z-10 px-3 py-1.5 text-sm font-medium transition"
                   style={{
                     WebkitTapHighlightColor: "transparent",

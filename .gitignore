@@ -40,3 +40,7 @@ next-env.d.ts
 postgres_data/
 
 .trigger
+components/analytics/feedback-landingpage-visit-dummy.json
+components/analytics/feedback-space-metadata.json
+components/analytics/feedback-submit-dummy.json
+components/analytics/feedback-walloffame-visit-dummy.json

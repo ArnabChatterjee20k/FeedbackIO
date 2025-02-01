@@ -51,7 +51,7 @@ type AnalyticsRecord = {
   };
 };
 
-type VisitType = "landing page" | "wall of fame";
+export type VisitType = "landing page" | "wall of fame";
 type VisitTypeResponse = AnalyticsRecord & {
   visits: Record<string, number>;
 };

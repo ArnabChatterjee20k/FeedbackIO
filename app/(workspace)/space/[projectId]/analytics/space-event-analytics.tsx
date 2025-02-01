@@ -1,14 +1,16 @@
+"use client";
+
+import { VerticalBarChartData } from "@/components/analytics/VerticalBarChart";
 import ChartCard from "@/components/analytics/ChartCard";
-import VerticalBarChart, {
-  type VerticalBarChartData,
-} from "@/components/analytics/VerticalBarChart";
+import VerticalBarChart from "@/components/analytics/VerticalBarChart";
 import ErrorMessage from "./error-message";
 import Loader from "./loader";
-import { getSpaceMetadata } from "@/lib/server/feedback-backend/analytics";
-import { Suspense } from "react";
+import useSWR from "swr";
 import { eventType, visitType } from "../types/analytics";
 
-export async function SpaceEventAnalytics({
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+export function SpaceEventAnalytics({
   spaceId,
   event,
   visit,
@@ -17,8 +19,31 @@ export async function SpaceEventAnalytics({
   event: eventType;
   visit?: visitType;
 }) {
-  const data = await getSpaceMetadata("feedback", spaceId);
-  if (!data) return <ErrorMessage />;
+  const { data, error, isLoading } = useSWR(
+    `/api/analytics/feedback/metadata?spaceId=${spaceId}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
+  if (isLoading)
+    return (
+      <ChartCard title="Pages">
+        <div className="flex w-full justify-center items-center">
+          <Loader />
+        </div>
+      </ChartCard>
+    );
+  if (error || !data)
+    return (
+      <ChartCard title="Pages">
+        <div className="flex w-full justify-center items-center">
+          <ErrorMessage />
+        </div>
+      </ChartCard>
+    );
+
   const spaceData: VerticalBarChartData[] = [
     {
       name: "feedback-submit",
@@ -42,11 +67,10 @@ export async function SpaceEventAnalytics({
       redirectionLink: "?event=visit&visit=wall-of-fame",
     },
   ];
+
   return (
-    <Suspense fallback={<Loader />}>
-      <ChartCard title="Pages">
-        <VerticalBarChart data={spaceData} />
-      </ChartCard>
-    </Suspense>
+    <ChartCard title="Pages">
+      <VerticalBarChart data={spaceData} />
+    </ChartCard>
   );
 }
