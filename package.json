@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "db:setup": "npx tsx scripts/db/createSchema.ts",
-    "trigger:dev": "pnpm dlx trigger.dev@latest dev"
+    "trigger:dev": "pnpm dlx trigger.dev@latest dev",
+    "trigger:deploy": "npx trigger.dev@latest deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
