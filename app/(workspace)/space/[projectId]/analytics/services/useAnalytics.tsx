@@ -1,17 +1,28 @@
 // hooks/useAnalytics.ts
-import { getPreviousDay, getThirtyDaysAgo, getToday } from '@/lib/date/utils';
+import { formatDate, getDateFromString, getPreviousDay, getThirtyDaysAgo, getToday } from '@/lib/date/utils';
 import useSWR from 'swr';
+import { useSearchParams } from "next/navigation";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+const today = getDateFromString(getToday());
+const thirtyDaysAgo = getDateFromString(getThirtyDaysAgo());
+
 export function useAnalyticsData(spaceId: string, eventType: 'submit' | 'visit', visitType?: string) {
-  const start = getThirtyDaysAgo();
-  const end = getToday();
+  const searchParams = useSearchParams();
+  const start = searchParams.get("start")
+    ? getDateFromString(searchParams.get("start")!)
+    : thirtyDaysAgo;
+  const end = searchParams.get("end")
+    ? getDateFromString(searchParams.get("end")!)
+    : today;
   
+  const formattedStart = formatDate(start)
+  const formattedEnd = formatDate(end)
   const { data, error } = useSWR(
     eventType === 'submit' 
-      ? `/api/analytics/feedback?spaceId=${spaceId}&start=${start}&end=${end}`
-      : `/api/analytics/feedback/visits?spaceId=${spaceId}&pageType=${visitType}&start=${start}&end=${end}`,
+      ? `/api/analytics/feedback?spaceId=${spaceId}&start=${formattedStart}&end=${formattedEnd}`
+      : `/api/analytics/feedback/visits?spaceId=${spaceId}&pageType=${visitType}&start=${formattedStart}&end=${formattedEnd}`,
     fetcher,
     {
       dedupingInterval: 60000,

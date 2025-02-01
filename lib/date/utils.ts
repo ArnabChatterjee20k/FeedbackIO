@@ -1,4 +1,4 @@
-import { format, addDays, subDays,parse } from "date-fns";
+import { format, addDays, subDays, parse } from "date-fns";
 
 const FORMAT = "yyyy-MM-dd";
 
@@ -6,8 +6,8 @@ export function formatDate(date: Date) {
   return format(date, FORMAT);
 }
 
-export function getToday(){
-    return formatDate(new Date())
+export function getToday() {
+  return formatDate(new Date());
 }
 
 export function getYesterday() {
@@ -32,4 +32,8 @@ export function getDate(days: number) {
 export function getPreviousDay(date: string) {
   const parsedDate = parse(date, FORMAT, new Date());
   return format(subDays(parsedDate, 1), FORMAT);
+}
+
+export function getDateFromString(date: string) {
+  return parse(date, FORMAT, new Date());
 }

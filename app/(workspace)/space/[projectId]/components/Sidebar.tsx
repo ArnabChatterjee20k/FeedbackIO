@@ -8,6 +8,7 @@ import {
   Workflow,
   Globe,
   Flame,
+  ChartLine,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -74,6 +75,11 @@ const data = {
       title: "Edit Space",
       url: "settings",
       icon: Settings2,
+    },
+    {
+      title: "Analytics",
+      url: "analytics",
+      icon: ChartLine,
     },
     {
       title: "Embed",

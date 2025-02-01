@@ -1,14 +1,11 @@
-"use client";
-
 import { VerticalBarChartData } from "@/components/analytics/VerticalBarChart";
 import ChartCard from "@/components/analytics/ChartCard";
 import VerticalBarChart from "@/components/analytics/VerticalBarChart";
 import ErrorMessage from "./error-message";
 import Loader from "./loader";
-import useSWR from "swr";
+import { useSearchParams } from "next/navigation";
 import { eventType, visitType } from "../types/analytics";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { useSpaceEventAnalytics } from "./services/useSpaceEventAnalytics";
 
 export function SpaceEventAnalytics({
   spaceId,
@@ -19,14 +16,19 @@ export function SpaceEventAnalytics({
   event: eventType;
   visit?: visitType;
 }) {
-  const { data, error, isLoading } = useSWR(
-    `/api/analytics/feedback/metadata?spaceId=${spaceId}`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 60000,
-    }
-  );
+  const searchParams = useSearchParams();
+  const start = searchParams.get("start");
+  const end = searchParams.get("end");
+
+  const buildRedirectionLink = (base: string) => {
+    const params = new URLSearchParams();
+    if (start) params.append("start", start);
+    if (end) params.append("end", end);
+    return params.toString() ? `${base}&${params.toString()}` : base;
+  };
+
+  const { data, error, isLoading } = useSpaceEventAnalytics(spaceId);
+
   if (isLoading)
     return (
       <ChartCard title="Pages">
@@ -35,6 +37,7 @@ export function SpaceEventAnalytics({
         </div>
       </ChartCard>
     );
+
   if (error || !data)
     return (
       <ChartCard title="Pages">
@@ -50,26 +53,26 @@ export function SpaceEventAnalytics({
       value: data.total_feedback,
       fill: "#bbdefb",
       active: event === "submit",
-      redirectionLink: "?event=submit",
+      redirectionLink: buildRedirectionLink("?event=submit"),
     },
     {
       name: "/landing-page",
       value: data.landing_page_visit,
       fill: "#c5cae9",
       active: event === "visit" && visit === "landing-page",
-      redirectionLink: "?event=visit&visit=landing-page",
+      redirectionLink: buildRedirectionLink("?event=visit&visit=landing-page"),
     },
     {
       name: "/wall-of-fame",
       value: data.wall_of_fame_visit,
       fill: "#ffcdd2",
       active: event === "visit" && visit === "wall-of-fame",
-      redirectionLink: "?event=visit&visit=wall-of-fame",
+      redirectionLink: buildRedirectionLink("?event=visit&visit=wall-of-fame"),
     },
   ];
 
   return (
-    <ChartCard title="Pages">
+    <ChartCard title="Total Stats">
       <VerticalBarChart data={spaceData} />
     </ChartCard>
   );
