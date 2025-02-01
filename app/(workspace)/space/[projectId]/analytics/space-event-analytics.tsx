@@ -22,9 +22,11 @@ export function SpaceEventAnalytics({
 
   const buildRedirectionLink = (base: string) => {
     const params = new URLSearchParams();
+    const newBase = encodeURI(base);
+    console.log({ newBase });
     if (start) params.append("start", start);
     if (end) params.append("end", end);
-    return params.toString() ? `${base}&${params.toString()}` : base;
+    return params.toString() ? `${newBase}&${params.toString()}` : newBase;
   };
 
   const { data, error, isLoading } = useSpaceEventAnalytics(spaceId);
@@ -59,15 +61,17 @@ export function SpaceEventAnalytics({
       name: "/landing-page",
       value: data.landing_page_visit,
       fill: "#c5cae9",
-      active: event === "visit" && visit === "landing-page",
-      redirectionLink: buildRedirectionLink("?event=visit&visit=landing-page"),
+      active:
+        event === "visit" && decodeURI(visit as string) === "landing page",
+      redirectionLink: buildRedirectionLink(`?event=visit&visit=landing page`),
     },
     {
       name: "/wall-of-fame",
       value: data.wall_of_fame_visit,
       fill: "#ffcdd2",
-      active: event === "visit" && visit === "wall-of-fame",
-      redirectionLink: buildRedirectionLink("?event=visit&visit=wall-of-fame"),
+      active:
+        event === "visit" && decodeURI(visit as string) === "wall of fame",
+      redirectionLink: buildRedirectionLink(`?event=visit&visit=wall of fame`),
     },
   ];
 

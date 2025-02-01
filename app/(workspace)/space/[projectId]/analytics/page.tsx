@@ -10,7 +10,5 @@ export default function Page({
 }) {
   if (!event || (event != "submit" && event != "visit"))
     redirect("?event=submit");
-  if (event === "visit" && visit !== "landing-page" && visit !== "wall-of-fame")
-    redirect("?event=visit&visit=landing-page");
   return <Analytics spaceId={projectId} event={event} visit={visit}/>;
 }

@@ -144,9 +144,9 @@ export async function createFeedback(
 ): Promise<AnalyticsCreationResult> {
   try {
     const { space_id } = body;
-    const endpoint = spaceTypesEndpointMap["feedback"]; // Assumes spaceTypesEndpointMap is defined elsewhere
-    const url = `${FEEDBACK_BACKEND_URL}/analytics/${endpoint}`; // Assumes FEEDBACK_BACKEND_URL is defined elsewhere
-    const headers = feedbackBackendDefaultHeader; // Assumes feedbackBackendDefaultHeader is defined elsewhere
+    const endpoint = spaceTypesEndpointMap["feedback"];
+    const url = `${FEEDBACK_BACKEND_URL}/analytics/${endpoint}`;
+    const headers = feedbackBackendDefaultHeader;
     const payload = { ...body, event: "submit" };
     const res = await axios.post(url, payload, { headers });
     const data = res.data as AnalyticsFeedbackResponse;
@@ -174,4 +174,43 @@ export async function createFeedback(
     return { status: "error", error: errorMessage };
   }
 }
-export async function createVisit() {}
+
+export interface VisitAnalyticsBody extends AnalyticsBody {
+  page_type: VisitType;
+}
+
+export async function createVisit(
+  body: VisitAnalyticsBody
+): Promise<AnalyticsCreationResult> {
+  try {
+    const endpoint = spaceTypesEndpointMap["feedback"];
+    const url = `${FEEDBACK_BACKEND_URL}/analytics/${endpoint}`;
+    const headers = feedbackBackendDefaultHeader;
+    const payload = { ...body, event: "visit" };
+
+    const res = await axios.post(url, payload, { headers });
+    const data = res.data as AnalyticsResponse;
+
+    if (!data.success) {
+      return { status: "error", error: "Unsuccessful response from backend" };
+    }
+
+    return { status: "success" };
+  } catch (e) {
+    let errorMessage = "An unknown error occurred";
+
+    if (e instanceof AxiosError) {
+      errorMessage = e.response?.data
+        ? JSON.stringify(e.response.data)
+        : e.message;
+      console.error({
+        status: e.response?.status,
+        data: e.response?.data || "",
+      });
+    } else if (e instanceof Error) {
+      errorMessage = e.message;
+    }
+
+    return { status: "error", error: errorMessage };
+  }
+}

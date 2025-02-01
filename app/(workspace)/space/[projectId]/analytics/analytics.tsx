@@ -48,6 +48,7 @@ export default function Analytics({
       router.replace(`?${params.toString()}`);
     }
   };
+  console.log({visit})
 
   return (
     <Suspense fallback={<Loader />}>

@@ -3,6 +3,7 @@ import getLandingPage from "@/lib/server/db/landing-page";
 import { getSettings } from "@/lib/server/db/settings";
 import { notFound } from "next/navigation";
 import { getUserSettingsStatus } from "./utils";
+import { postVisitAnalytics } from "../utils";
 
 export default async function page({
   params,
@@ -11,7 +12,8 @@ export default async function page({
 }) {
   const projectId = params.projectId;
   await getUserSettingsStatus(projectId);
-
+  // no need to await
+  postVisitAnalytics(projectId, "landing page");
   const [landingPage, settings] = await Promise.all([
     getLandingPage(projectId),
     getUserSettingsStatus(projectId),

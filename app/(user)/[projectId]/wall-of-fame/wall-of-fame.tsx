@@ -5,12 +5,14 @@ import {
   getAllWallOfFameFeedbacks,
   getSocialFeedbacks,
 } from "@/lib/server/db/feedback";
+import { postVisitAnalytics } from "../utils";
 
 export default async function WallOfFame({
   params,
 }: {
   params: { projectId: string };
 }) {
+  postVisitAnalytics(params.projectId, "wall of fame");
   const feedbacks = getAllWallOfFameFeedbacks(params.projectId);
   const socialFeedbacks = getSocialFeedbacks({
     type: "all",
