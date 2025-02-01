@@ -49,8 +49,8 @@ const BarItem = ({
     >
       <span
         className={`absolute inset-0 scale-x-0 w-2 -left-4 rounded-sm ${
-          hover ? "group-hover:scale-x-100" : ""
-        } ${active ? "scale-x-100" : ""}`}
+          active ? "scale-x-100" : ""
+        }`}
         style={{ backgroundColor: barStyle.backgroundColor }}
       ></span>
       <div className="relative text-sm font-mono py-2 px-3 flex-1 text-left rounded-sm">

@@ -4,7 +4,6 @@ import {
   Area,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
@@ -21,10 +20,13 @@ export interface Props {
 }
 
 export default function Chart({ data, color, stroke }: Props) {
+  const isEmpty = data.length === 0;
+  const dataToShow = isEmpty ? [{ name: 0, value: 0 }] : data;
+
   return (
     <ResponsiveContainer width="100%" minHeight={300}>
       <AreaChart
-        data={data}
+        data={dataToShow}
         margin={{
           top: 30,
           right: 30,
@@ -35,16 +37,18 @@ export default function Chart({ data, color, stroke }: Props) {
         <XAxis dataKey="name" className="text-xs sm:text-sm" />
         <YAxis
           className="text-xs sm:text-sm"
-          domain={data.length === 0 ? ["dataMin - 0.1", "auto"] : undefined}
+          domain={isEmpty ? [0, 1] : ["auto", "auto"]} // Ensures Y-axis renders
         />
         <Tooltip />
-        <Area
-          type="monotone"
-          dataKey="value"
-          fill={color ? color : "#ED9E88"}
-          stroke={stroke ? stroke : "#ED9E88"}
-          fillOpacity={0.3} // Adjust fill opacity for a lighter look
-        />
+        {!isEmpty && (
+          <Area
+            type="monotone"
+            dataKey="value"
+            fill={color || "#ED9E88"}
+            stroke={stroke || "#ED9E88"}
+            fillOpacity={0.3}
+          />
+        )}
       </AreaChart>
     </ResponsiveContainer>
   );
