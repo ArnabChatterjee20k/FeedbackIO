@@ -32,6 +32,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/recharts": "^1.8.29",
+    "@upstash/redis": "^1.34.3",
     "@vercel/functions": "^1.4.2",
     "appwrite": "16.0.2",
     "autoprefixer": "^10.4.20",
@@ -74,6 +75,7 @@
   },
   "devDependencies": {
     "@trigger.dev/build": "3.3.12",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.1"
   }
 }

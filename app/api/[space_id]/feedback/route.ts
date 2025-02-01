@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { tasks } from "@trigger.dev/sdk/v3";
 import {
   addFeedback,
   FeedbackBody,
@@ -6,10 +7,15 @@ import {
   isFeedbackGivenByTheUser,
 } from "@/lib/server/db/feedback";
 import { getSettings } from "@/lib/server/db/settings";
-import { ipAddress } from "@vercel/functions";
-import { NextRequest, NextResponse } from "next/server";
-import { validateUserForGivingFeedback } from "./feedback-api-utils";
+import { geolocation, ipAddress } from "@vercel/functions";
+import { NextRequest, NextResponse, userAgent } from "next/server";
+import {
+  trrigerFeedbackAnalytics,
+  validateUserForGivingFeedback,
+} from "./feedback-api-utils";
 import { setFeedbackCookie } from "../utils";
+import { getCache } from "@/lib/server/cache/uitls";
+import { getFeedbackKey } from "@/lib/server/feedback-backend/analytics-tag";
 
 export async function GET(
   request: NextRequest,
@@ -25,8 +31,6 @@ export async function GET(
   });
 }
 
-// reading the cookies to check
-// along with cookies, sending the token in the body as well so that frontend can save it in the frontend to parse the payload and view it
 export async function POST(
   request: NextRequest,
   { params }: { params: { space_id: string } }
@@ -64,14 +68,20 @@ export async function POST(
       { status: 400 }
     );
   const { feedback, name, stars } = body;
-  const { success: feedbackAddSuccess } = await addFeedback(spaceId, {
-    feedback,
-    name,
-    stars,
-    userEmail,
-    userID,
-    userIP: userIP,
-  });
+  const userDeviceInfo = userAgent(request);
+  const geoInfo = geolocation(request);
+  const unknown = "UNKNOWN";
+  const { success: feedbackAddSuccess, docId: feedbackId } = await addFeedback(
+    spaceId,
+    {
+      feedback,
+      name,
+      stars,
+      userEmail,
+      userID,
+      userIP: userIP,
+    }
+  );
   if (!feedbackAddSuccess)
     return NextResponse.json(
       {
@@ -80,7 +90,15 @@ export async function POST(
       },
       { status: 500 }
     );
-
+  await trrigerFeedbackAnalytics(userIP, {
+    ip_address: userIP,
+    browser: userDeviceInfo.browser.name || unknown,
+    country: geoInfo.country || unknown,
+    feedback: feedback,
+    feedback_id: feedbackId || unknown,
+    os: userDeviceInfo.os.name || unknown,
+    space_id: spaceId,
+  });
   return NextResponse.json(
     { message: "Feedback saved successfully", success: feedbackAddSuccess },
     {

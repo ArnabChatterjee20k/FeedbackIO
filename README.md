@@ -11,6 +11,11 @@ appwrite push <element>
 
 5. For functions follow this https://appwrite.io/docs/products/functions/develop#request
 6. Also paste the env in the fuction environt variables
+7. For using the redis
+* run the docker compose
+* go to http://0.0.0.0:5540/ for using the redisinsight
+* use redis://redis:6379 in redisinsight for using the database
+* using serverless redis proxy as well in the docker as suggested by upstash local development docs
 
 ### Implementing SSO and extending it
 1. Basically for auth required spaces , we need to authenticate users

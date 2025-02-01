@@ -1,4 +1,5 @@
 // not using axios as fetch and get can be easily used for caching
+import axios, { AxiosError } from "axios";
 import { FEEDBACK_BACKEND_URL, feedbackBackendDefaultHeader } from "./config";
 import { generateURL } from "@/lib/utils";
 
@@ -64,12 +65,15 @@ export async function getVisitData(
   end?: string
 ): Promise<VisitTypeResponse | null> {
   const endpoint = spaceTypesEndpointMap[spaceType];
-  const url = generateURL(`${FEEDBACK_BACKEND_URL}/analytics/${endpoint}/${spaceId}`, {
-    event: "visit",
-    visit: visitType,
-    ...(start ? { start } : {}),
-    ...(end ? { end } : {}),
-  });
+  const url = generateURL(
+    `${FEEDBACK_BACKEND_URL}/analytics/${endpoint}/${spaceId}`,
+    {
+      event: "visit",
+      visit: visitType,
+      ...(start ? { start } : {}),
+      ...(end ? { end } : {}),
+    }
+  );
   try {
     const res = await fetcher(url);
     if (!res.ok || res.status !== 200) throw new Error("Some Error Occured");
@@ -92,11 +96,14 @@ export async function getFeedbackSubmissionData(
   end?: string
 ): Promise<FeedbackSubmissionResponse | null> {
   const endpoint = spaceTypesEndpointMap[spaceType];
-  const url = generateURL(`${FEEDBACK_BACKEND_URL}/analytics/${endpoint}/${spaceId}`, {
-    event: "submit",
-    ...(start ? { start } : {}),
-    ...(end ? { end } : {}),
-  });
+  const url = generateURL(
+    `${FEEDBACK_BACKEND_URL}/analytics/${endpoint}/${spaceId}`,
+    {
+      event: "submit",
+      ...(start ? { start } : {}),
+      ...(end ? { end } : {}),
+    }
+  );
   try {
     const res = await fetcher(url);
     if (!res.ok || res.status !== 200) throw new Error("Some Error Occured");
@@ -107,3 +114,64 @@ export async function getFeedbackSubmissionData(
     return null;
   }
 }
+export interface AnalyticsBody {
+  browser: string;
+  country: string;
+  ip_address: string;
+  os: string;
+  space_id: string;
+}
+
+export interface AnalyticsResponse {
+  success: boolean;
+}
+
+export interface AnalyticsFeedbackResponse extends AnalyticsResponse {
+  sentiment: number;
+}
+
+export interface FeedbackAnalyticsBody extends AnalyticsBody {
+  feedback_id: string;
+  feedback: string;
+}
+
+type AnalyticsCreationResult =
+  | { status: "success" }
+  | { status: "error"; error: string };
+
+export async function createFeedback(
+  body: FeedbackAnalyticsBody
+): Promise<AnalyticsCreationResult> {
+  try {
+    const { space_id } = body;
+    const endpoint = spaceTypesEndpointMap["feedback"]; // Assumes spaceTypesEndpointMap is defined elsewhere
+    const url = `${FEEDBACK_BACKEND_URL}/analytics/${endpoint}`; // Assumes FEEDBACK_BACKEND_URL is defined elsewhere
+    const headers = feedbackBackendDefaultHeader; // Assumes feedbackBackendDefaultHeader is defined elsewhere
+    const payload = { ...body, event: "submit" };
+    const res = await axios.post(url, payload, { headers });
+    const data = res.data as AnalyticsFeedbackResponse;
+
+    if (!data.success) {
+      return { status: "error", error: "Unsuccessful response from backend" };
+    }
+
+    return { status: "success" };
+  } catch (e) {
+    let errorMessage = "An unknown error occurred";
+
+    if (e instanceof AxiosError) {
+      errorMessage = e.response?.data
+        ? JSON.stringify(e.response.data)
+        : e.message;
+      console.error({
+        status: e.response?.status,
+        data: e.response?.data || "",
+      });
+    } else if (e instanceof Error) {
+      errorMessage = e.message;
+    }
+
+    return { status: "error", error: errorMessage };
+  }
+}
+export async function createVisit() {}
