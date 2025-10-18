@@ -41,9 +41,11 @@ export default function AddMembers({
   children,
   data,
   document_id,
+  disabled
 }: PropsWithChildren & {
   data: UsersPermission[];
   document_id: string;
+  disabled?:boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [members, setMembers] = useState<UsersPermission[]>([...data]);
@@ -87,7 +89,7 @@ export default function AddMembers({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Members</Button>
+        <Button disabled={disabled}>Add Members</Button>
       </DialogTrigger>
       <DialogContent onInteractOutside={(e) => e.preventDefault()} className="max-w-[650px]">
         <DialogHeader>
@@ -125,7 +127,7 @@ export default function AddMembers({
                   type="submit"
                   variant="outline"
                   className="bg-accent text-accent-foreground hover:bg-white"
-                  disabled={isAddMemberPending}
+                  disabled={disabled || isAddMemberPending}
                 >
                   {isAddMemberPending ? "Adding..." : "Add"}
                 </Button>

@@ -1,4 +1,3 @@
-import AddMembers from "@/app/(workspace)/space/[projectId]/feedbacks/component/add-members-modal/add-members";
 import { PropsWithChildren } from "react";
 import MembersList from "./component/add-members-modal";
 
