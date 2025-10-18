@@ -14,6 +14,7 @@ export async function middleware(req: NextRequest) {
   const user = await getUser();
   const isDashboardRequest = req.nextUrl.pathname.startsWith("/dashboard");
   const isLoginRequest = req.nextUrl.pathname.startsWith("/login");
+  const isShareRequest = req.nextUrl.pathname.match(new RegExp("^/[^/]+/share(/.*)?$"))
 
   if (isDashboardRequest && !user) {
     return NextResponse.redirect(new URL("/login", req.url));
@@ -22,9 +23,20 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
+  // hack: searchParams not accessible in the /projectId/share/ -> so sending the route url with it
+  if(isShareRequest){
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-url', req.url);
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      }
+    });
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard", "/login","/api/:path*"], // Only apply this middleware to the /dashboard route
+  matcher: ["/dashboard", "/login","/api/:path*","/:projectId/share/:path*"] // Only apply this middleware to the /dashboard route
 };
