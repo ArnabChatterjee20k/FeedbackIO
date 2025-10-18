@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { XCircle } from 'lucide-react'
 
-export default function NoAccess() {
+export default function NoAccess({text}:{text?:string}) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-lg rounded-xl">
@@ -9,7 +9,7 @@ export default function NoAccess() {
           <XCircle className="mx-auto h-16 w-16 text-red-500" />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Access Denied</h2>
           <p className="mt-2 text-sm text-gray-600">
-            Sorry, you don't have permission to access this page.
+            {text||"Sorry, you don't have permission to access this page."}
           </p>
         </div>
         <div className="mt-8 space-y-6">

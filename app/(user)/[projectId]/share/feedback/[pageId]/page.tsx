@@ -1,16 +1,16 @@
 import React from "react";
-import { getAllFeedbacks, getSocialFeedbacks } from "@/lib/server/db/feedback";
+import { getAllFeedbacksFromClient, getSocialFeedbacks } from "@/lib/server/db/feedback";
 import { Feedbackcard } from "@/app/(workspace)/space/[projectId]/components/feedback-card";
 import PaginatedView from "@/app/(workspace)/space/[projectId]/feedbacks/component/paginated-view";
 import SocialCard from "@/app/(workspace)/space/[projectId]/components/social-card";
 
-export default async function page({
+export default async function SharedFeedbacks({
   params,
 }: {
   params: { pageId: string; projectId: string };
 }) {
   try {
-    const feedbacks = getAllFeedbacks({
+    const feedbacks = getAllFeedbacksFromClient({
       space_id: params.projectId,
       page: parseInt(params.pageId) || 1,
     });

@@ -148,6 +148,54 @@ export async function getAllFeedbacks({
   }
 }
 
+export async function getAllFeedbacksFromClient({
+  space_id,
+  liked,
+  page = 1,
+  limit = 25,
+}: FeedbackQueryParams): Promise<FeedbackResponse> {
+  try {
+    const { db } = await createAdminClient();
+    const queryConditions = [Query.equal("space_id", space_id)];
+
+    if (typeof liked === "boolean") {
+      queryConditions.push(Query.equal("wall_of_fame", liked));
+    }
+
+    const finalQuery = [
+      queryConditions.length > 1
+        ? Query.and(queryConditions)
+        : queryConditions[0],
+
+      Query.limit(limit + 1), // Get one extra to check for next page
+      Query.offset((page - 1) * limit),
+    ];
+
+    const response = await db.listDocuments(
+      process.env.DB_ID!,
+      process.env.FEEDBACK_COL_ID!,
+      finalQuery
+    );
+
+    // Check if there's a next page
+    const hasNext = response.documents.length > limit;
+
+    return {
+      documents: response.documents.slice(
+        0,
+        limit
+      ) as unknown[] as FeedbackAttributes[], // Remove the extra document
+      total: response.total,
+      isNext: hasNext,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch feedbacks: ${error.message}`);
+    }
+    throw new Error("Failed to fetch feedbacks");
+  }
+}
+
 interface SocialFeedbackProps {
   type: "linkedin" | "twitter" | "all";
   wallOfFame?: boolean;
