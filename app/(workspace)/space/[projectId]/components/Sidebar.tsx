@@ -9,6 +9,7 @@ import {
   Globe,
   Flame,
   ChartLine,
+  KeyIcon
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -70,6 +71,11 @@ const data = {
           url: "linkedin",
         },
       ],
+    },
+    {
+      title: "API Keys",
+      url: "api-keys",
+      icon: KeyIcon,
     },
     {
       title: "Edit Space",

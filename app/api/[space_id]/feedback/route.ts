@@ -16,6 +16,7 @@ import {
 import { setFeedbackCookie } from "../utils";
 import { getCache } from "@/lib/server/cache/uitls";
 import { getFeedbackKey } from "@/lib/server/feedback-backend/analytics-tag";
+import { verifyJWT } from "@/lib/server/tokens/get-token";
 
 export async function GET(
   request: NextRequest,
@@ -36,7 +37,21 @@ export async function POST(
   { params }: { params: { space_id: string } }
 ) {
   const body: FeedbackBody = await request.json();
-  const token = request.nextUrl.searchParams.get("token") || ""; // pass it to the session checker
+  const token = request.nextUrl.searchParams.get("token") || "";
+  const apiKey = request.nextUrl.searchParams.get("apiKey") || "";
+  try {
+    const payload = await verifyJWT(apiKey);
+    if (apiKey && (!payload || payload["space_id"] !== params.space_id))
+      return NextResponse.json(
+        { success: false, message: "Bad API key" },
+        { status: 401 }
+      );
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: "Bad API key" },
+      { status: 401 }
+    );
+  }
   const userIP = ipAddress(request) || process.env.DEFAULT_IP! || "";
   const spaceId = params.space_id;
   const {
@@ -90,15 +105,17 @@ export async function POST(
       },
       { status: 500 }
     );
-  await trrigerFeedbackAnalytics(userIP, {
-    ip_address: userIP,
-    browser: userDeviceInfo.browser.name || unknown,
-    country: geoInfo.country || unknown,
-    feedback: feedback,
-    feedback_id: feedbackId || unknown,
-    os: userDeviceInfo.os.name || unknown,
-    space_id: spaceId,
-  });
+  if (!apiKey) {
+    await trrigerFeedbackAnalytics(userIP, {
+      ip_address: userIP,
+      browser: userDeviceInfo.browser.name || unknown,
+      country: geoInfo.country || unknown,
+      feedback: feedback,
+      feedback_id: feedbackId || unknown,
+      os: userDeviceInfo.os.name || unknown,
+      space_id: spaceId,
+    });
+  }
   return NextResponse.json(
     { message: "Feedback saved successfully", success: feedbackAddSuccess },
     {

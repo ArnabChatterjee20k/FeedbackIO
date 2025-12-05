@@ -598,5 +598,600 @@
       "commands": "pip install -r requirements.txt",
       "path": "functions/linkedin-scraper"
     }
+  ],
+  "tablesDB": [
+    {
+      "$id": "670f600400337e01d085",
+      "name": "PrimaryDB",
+      "enabled": true
+    }
+  ],
+  "tables": [
+    {
+      "$id": "6712af200005bddd2d27",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "670f600400337e01d085",
+      "name": "landingPage",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "buttonText",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 40,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "questionSection",
+          "type": "boolean",
+          "required": true,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "questions",
+          "type": "string",
+          "required": false,
+          "array": true,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "message",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "primaryColor",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "space_id",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "logo",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "uid",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "6712b0340008b2f4c67d",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "670f600400337e01d085",
+      "name": "settings",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "authEnabledReview",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "ipEnabledReview",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "nameRequired",
+          "type": "boolean",
+          "required": true,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "starRatingRequired",
+          "type": "boolean",
+          "required": true,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "space_id",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "uid",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "6712b036001462701174",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "670f600400337e01d085",
+      "name": "thankYouPage",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "message",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "space_id",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "uid",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "6712b0bc0032ced0e406",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "670f600400337e01d085",
+      "name": "notification",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "emailOnFeedback",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "emailTemplate",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "space_id",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "uid",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "6712b1c0002c31c0703a",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "670f600400337e01d085",
+      "name": "space",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "logo",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "fileId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "newFileId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "newFileURL",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3000,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "671bd95f001c4cce4f09",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "670f600400337e01d085",
+      "name": "feedbacks",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "name",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 50,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userID",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 50,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userIP",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "stars",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 1,
+          "max": 10,
+          "default": null
+        },
+        {
+          "key": "feedback",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userEmail",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "space_id",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "wall_of_fame",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "672115590023ed35e867",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")",
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "670f600400337e01d085",
+      "name": "social-integration",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "space_id",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userProfilePicture",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 50,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "content",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "contentImage",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "tag",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 650,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "url",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 3000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 300,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "wall_of_fame",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "error",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "67231d8d0027ee2e5352",
+      "$permissions": [],
+      "databaseId": "670f600400337e01d085",
+      "name": "embed_links",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "cdn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "embed_name",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "apikeys",
+      "$permissions": [],
+      "databaseId": "670f600400337e01d085",
+      "name": "apiKeys",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "space_id",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "api_key",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 260,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "blocked",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        }
+      ],
+      "indexes": []
+    }
   ]
 }

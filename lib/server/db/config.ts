@@ -7,3 +7,5 @@ export const NOTIFICATIONS_COL_ID = process.env.NOTIFICATIONS_COL_ID!
 export const FEEDBACK_COL_ID = process.env.FEEDBACK_COL_ID!
 export const SOCIAL_COL_ID = process.env.SOCIAL_COL_ID!
 export const EMBED_COL_ID = process.env.EMBED_COL_ID!
+// hard coding it will have no impact
+export const API_KEY_COL_ID = 'apikeys';
