@@ -39,18 +39,20 @@ export async function POST(
   const body: FeedbackBody = await request.json();
   const token = request.nextUrl.searchParams.get("token") || "";
   const apiKey = request.nextUrl.searchParams.get("apiKey") || "";
-  try {
-    const payload = await verifyJWT(apiKey);
-    if (apiKey && (!payload || payload["space_id"] !== params.space_id))
+  if (apiKey) {
+    try {
+      const payload = await verifyJWT(apiKey);
+      if (!payload || payload["space_id"] !== params.space_id)
+        return NextResponse.json(
+          { success: false, message: "Bad API key" },
+          { status: 401 }
+        );
+    } catch (error) {
       return NextResponse.json(
         { success: false, message: "Bad API key" },
         { status: 401 }
       );
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, message: "Bad API key" },
-      { status: 401 }
-    );
+    }
   }
   const userIP = ipAddress(request) || process.env.DEFAULT_IP! || "";
   const spaceId = params.space_id;
