@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="201" height="20" role="img" aria-label="feedback: create your badge">
+  <title>feedback: create your badge</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="201" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="78" height="20" fill="#404040"/>
+    <rect x="78" width="123" height="20" fill="#ea580c"/>
+    <rect width="201" height="20" fill="url(#s)"/>
+  </g>
+  <g transform="translate(6,4.5) scale(0.4583333333333333)"><g fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></g></g>
+  <g text-anchor="start" font-family="Verdana,DejaVu Sans,Geneva,sans-serif" font-size="11">
+    <text x="20" y="14.5" fill="#000" fill-opacity=".3">feedback</text>
+    <text x="20" y="14" fill="#ffffff">feedback</text>
+    <text x="84" y="14.5" fill="#000" fill-opacity=".3">create your badge</text>
+    <text x="84" y="14" fill="#ffffff">create your badge</text>
+  </g>
+</svg>
