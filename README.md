@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/gradient.svg?title=FeedbackIO&subtitle=Collect,+manage+%26+showcase+user+feedback&theme=orange&mode=dark" />
-    <img alt="FeedbackIO — collect, manage & showcase user feedback" src="https://shieldcn.dev/header/gradient.svg?title=FeedbackIO&subtitle=Collect,+manage+%26+showcase+user+feedback&theme=orange&mode=light" width="820" />
+    <source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.svg" />
+    <img alt="FeedbackIO — collect, manage & showcase user feedback" src="assets/header-light.svg" width="820" />
   </picture>
 </p>
 
@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img alt="Appwrite Hackathon 2024 Winner" src="https://shieldcn.dev/badge/Appwrite%20Hackathon-2024%20Winner-FD366E.svg?logo=appwrite" />
+  <img alt="Appwrite Hackathon 2024 Winner" src="assets/hackathon-winner.svg" />
 </p>
 
 <p align="center">
