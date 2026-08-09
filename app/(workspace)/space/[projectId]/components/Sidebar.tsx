@@ -9,7 +9,8 @@ import {
   Globe,
   Flame,
   ChartLine,
-  KeyIcon
+  KeyIcon,
+  Award
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -113,6 +114,11 @@ const data = {
       name: "Wall of fame",
       url: "share/wall-of-fame",
       icon: Flame,
+    },
+    {
+      name: "GitHub Badge",
+      url: "share/badge",
+      icon: Award,
     },
   ],
 };

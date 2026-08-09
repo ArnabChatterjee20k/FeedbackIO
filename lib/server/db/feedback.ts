@@ -261,6 +261,22 @@ export async function toggleWallOfFame(
   }
 }
 
+/**
+ * Returns the total number of feedbacks for a space using the admin client, so
+ * it works from unauthenticated public contexts (e.g. the badge route). Only the
+ * `total` from Appwrite is used — we ask for a single document to keep it cheap.
+ * Caching is handled by the caller (the badge route wraps this in Next's
+ * unstable_cache with a 1-hour revalidate).
+ */
+export async function getFeedbackCount(space_id: string): Promise<number> {
+  const { db } = await createAdminClient();
+  const response = await db.listDocuments(DB_ID, FEEDBACK_COL_ID, [
+    Query.equal("space_id", space_id),
+    Query.limit(1),
+  ]);
+  return response.total;
+}
+
 export async function getAllWallOfFameFeedbacks(space_id: string) {
   try {
     const { db } = await createAdminClient();
