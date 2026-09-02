@@ -105,7 +105,7 @@ export default function FeedbackForm({
   };
 
   return (
-    <Card className="max-h-[80vh] overflow-y-scroll md:overflow-hidden max-w-2xl w-full mx-auto">
+    <Card className="max-h-[80vh] overflow-y-auto max-w-2xl w-full mx-auto">
       <CardHeader className="text-center">
         <div className="w-20 h-20 mx-auto my-7">
           <Avatar className="rounded-full size-32">
