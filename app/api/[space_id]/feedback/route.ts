@@ -1,5 +1,4 @@
 export const dynamic = "force-dynamic";
-import { tasks } from "@trigger.dev/sdk/v3";
 import {
   addFeedback,
   FeedbackBody,
@@ -7,15 +6,11 @@ import {
   isFeedbackGivenByTheUser,
 } from "@/lib/server/db/feedback";
 import { getSettings } from "@/lib/server/db/settings";
-import { geolocation, ipAddress } from "@vercel/functions";
-import { NextRequest, NextResponse, userAgent } from "next/server";
-import {
-  trrigerFeedbackAnalytics,
-  validateUserForGivingFeedback,
-} from "./feedback-api-utils";
+import { ipAddress, waitUntil } from "@vercel/functions";
+import { NextRequest, NextResponse } from "next/server";
+import { validateUserForGivingFeedback } from "./feedback-api-utils";
 import { setFeedbackCookie } from "../utils";
-import { getCache } from "@/lib/server/cache/uitls";
-import { getFeedbackKey } from "@/lib/server/feedback-backend/analytics-tag";
+import { trackFeedbackSubmit } from "@/lib/server/analytics";
 import { verifyJWT } from "@/lib/server/tokens/get-token";
 
 export async function GET(
@@ -85,10 +80,7 @@ export async function POST(
       { status: 400 }
     );
   const { feedback, name, stars } = body;
-  const userDeviceInfo = userAgent(request);
-  const geoInfo = geolocation(request);
-  const unknown = "UNKNOWN";
-  const { success: feedbackAddSuccess, docId: feedbackId } = await addFeedback(
+  const { success: feedbackAddSuccess } = await addFeedback(
     spaceId,
     {
       feedback,
@@ -108,15 +100,14 @@ export async function POST(
       { status: 500 }
     );
   if (!apiKey) {
-    await trrigerFeedbackAnalytics(userIP, {
-      ip_address: userIP,
-      browser: userDeviceInfo.browser.name || unknown,
-      country: geoInfo.country || unknown,
-      feedback: feedback,
-      feedback_id: feedbackId || unknown,
-      os: userDeviceInfo.os.name || unknown,
-      space_id: spaceId,
-    });
+    waitUntil(
+      trackFeedbackSubmit({
+        spaceId,
+        ip: userIP,
+        userAgent: request.headers.get("user-agent") || "",
+        referrer: request.headers.get("referer") || "",
+      })
+    );
   }
   return NextResponse.json(
     { message: "Feedback saved successfully", success: feedbackAddSuccess },

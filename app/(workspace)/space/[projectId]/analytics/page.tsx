@@ -1,14 +1,13 @@
-import { redirect } from "next/navigation";
+import { getSpace } from "@/lib/server/db/spaces";
+import { getUser } from "@/lib/server/utils";
 import Analytics from "./analytics";
-import { visitType, type eventType } from "../types/analytics";
-export default function Page({
+
+export default async function Page({
   params: { projectId },
-  searchParams: { event, visit },
 }: {
   params: { projectId: string };
-  searchParams: { event: eventType; visit?: visitType };
 }) {
-  if (!event || (event != "submit" && event != "visit"))
-    redirect("?event=submit");
-  return <Analytics spaceId={projectId} event={event} visit={visit}/>;
+  const user = await getUser();
+  const space = user ? await getSpace(user.$id, projectId) : null;
+  return <Analytics spaceId={projectId} spaceName={space?.name} />;
 }

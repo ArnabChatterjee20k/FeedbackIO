@@ -3,7 +3,7 @@ import getLandingPage from "@/lib/server/db/landing-page";
 import { getSettings } from "@/lib/server/db/settings";
 import { notFound } from "next/navigation";
 import { getUserSettingsStatus } from "./utils";
-import { postVisitAnalytics } from "../utils";
+import VisitTracker from "../visit-tracker";
 
 export default async function page({
   params,
@@ -12,8 +12,6 @@ export default async function page({
 }) {
   const projectId = params.projectId;
   await getUserSettingsStatus(projectId);
-  // no need to await
-  postVisitAnalytics(projectId, "landing page");
   const [landingPage, settings] = await Promise.all([
     getLandingPage(projectId),
     getUserSettingsStatus(projectId),
@@ -45,17 +43,20 @@ export default async function page({
   } = settings;
 
   return (
-    <LandingPage
-      name={name as string}
-      buttonText={buttonText as string}
-      logo={logo as string}
-      message={message as string as string}
-      primaryColor={primaryColor as string}
-      questionSection={questionSection as boolean}
-      questions={questions as string[]}
-      feedbackFormProps={settingsDocs as FeedbackFormProps}
-      spaceId={projectId}
-      sharingEnvironment={{ success: success, type: type ? type : null }}
-    />
+    <>
+      <VisitTracker spaceId={projectId} pageType="landing page" />
+      <LandingPage
+        name={name as string}
+        buttonText={buttonText as string}
+        logo={logo as string}
+        message={message as string as string}
+        primaryColor={primaryColor as string}
+        questionSection={questionSection as boolean}
+        questions={questions as string[]}
+        feedbackFormProps={settingsDocs as FeedbackFormProps}
+        spaceId={projectId}
+        sharingEnvironment={{ success: success, type: type ? type : null }}
+      />
+    </>
   );
 }

@@ -7,10 +7,6 @@ import {
 } from "@/lib/server/db/feedback";
 import { getUser } from "@/lib/server/utils";
 import { cookies } from "next/headers";
-import { getFeedbackKey } from "@/lib/server/feedback-backend/analytics-tag";
-import { getCache, ONE_HOUR_TTL } from "@/lib/server/cache/uitls";
-import { tasks } from "@trigger.dev/sdk/v3";
-import { FeedbackAnalyticsBody } from "@/lib/server/feedback-backend/analytics";
 export interface VALIDATION_RESPONSE {
   success: boolean;
   message: string;
@@ -98,32 +94,5 @@ async function checkAuth(token: string) {
     return await getUser(token);
   } catch {
     return null;
-  }
-}
-
-export async function trrigerFeedbackAnalytics(
-  userIP: string,
-  payload: FeedbackAnalyticsBody
-) {
-  const key = getFeedbackKey(userIP, payload.space_id);
-  try {
-    const cache = getCache();
-    if (await cache.get(key)) {
-      console.info(`${key} already exists`);
-      return;
-    }
-    await tasks.trigger("save-analytics-feedback", payload, {
-      tags: ["analytics", "feedback", key],
-      // @ts-ignore
-      metadata: payload,
-    });
-    return true;
-  } catch (error) {
-    console.error({
-      message: "Error triggering saving feedback task",
-      cacheKey: key,
-      error,
-    });
-    return false;
   }
 }
