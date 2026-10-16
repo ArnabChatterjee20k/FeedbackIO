@@ -16,7 +16,6 @@ import {
 } from "@/lib/date/utils";
 import { DateRange } from "react-day-picker";
 import { useSearchParams, useRouter } from "next/navigation";
-import Sentiment from "./components/sentiment";
 import TotalFeedback from "./components/total-feedbacks";
 
 const today = getDateFromString(getToday());
@@ -59,7 +58,6 @@ export default function Analytics({
             onDateChange={handleDateChange}
           />
           <div className="flex gap-2 items-center flex-wrap w-full justify-end">
-            <Sentiment spaceId={spaceId} />
             <TotalFeedback spaceId={spaceId} />
           </div>
         </div>

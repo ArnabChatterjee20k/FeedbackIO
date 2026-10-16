@@ -52,7 +52,7 @@ export function SpaceEventAnalytics({
   const spaceData: VerticalBarChartData[] = [
     {
       name: "feedback-submit",
-      value: data.total_feedback,
+      value: data.feedback_submit,
       fill: "#bbdefb",
       active: event === "submit",
       redirectionLink: buildRedirectionLink("?event=submit"),

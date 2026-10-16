@@ -5,14 +5,13 @@ import {
   getAllWallOfFameFeedbacks,
   getSocialFeedbacks,
 } from "@/lib/server/db/feedback";
-import { postVisitAnalytics } from "../utils";
+import VisitTracker from "../visit-tracker";
 
 export default async function WallOfFame({
   params,
 }: {
   params: { projectId: string };
 }) {
-  postVisitAnalytics(params.projectId, "wall of fame");
   const feedbacks = getAllWallOfFameFeedbacks(params.projectId);
   const socialFeedbacks = getSocialFeedbacks({
     type: "all",
@@ -35,6 +34,7 @@ export default async function WallOfFame({
 
   return (
     <section id="wall-of-fame" className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <VisitTracker spaceId={params.projectId} pageType="wall of fame" />
       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 max-w-[1500px] mx-auto py-5">
         {combinedFeedbacks.map((feedback) => {
           return feedback?.type === "twitter" ||

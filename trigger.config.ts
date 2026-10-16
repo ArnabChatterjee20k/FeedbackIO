@@ -16,7 +16,7 @@ export default defineConfig({
       randomize: true,
     },
   },
-  dirs: ["./src/trigger","./src/analytics"],
+  dirs: ["./src/trigger"],
   build:{
     extensions:[puppeteer()]
   }

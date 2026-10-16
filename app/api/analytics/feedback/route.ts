@@ -1,4 +1,4 @@
-import { getFeedbackSubmissionData } from '@/lib/server/feedback-backend/analytics';
+import { getFeedbackSubmissionData } from '@/lib/server/analytics';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
   }
 
-  const data = await getFeedbackSubmissionData('feedback', spaceId, start, end);
-  console.log({feedbackData:data})
+  const data = await getFeedbackSubmissionData(spaceId, start, end);
   return NextResponse.json(data);
 }
