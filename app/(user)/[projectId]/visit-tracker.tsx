@@ -1,5 +1,5 @@
 "use client";
-import type { VisitType } from "@/lib/server/analytics";
+import type { VisitType } from "@/lib/analytics/types";
 import { useEffect } from "react";
 
 // Fires from the browser so the visit is recorded with the visitor's

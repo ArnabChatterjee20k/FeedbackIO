@@ -1,5 +1,16 @@
 import "server-only";
 import { Query } from "node-appwrite";
+import {
+  ANALYTICS_METRICS,
+  BREAKDOWN_DIMENSIONS,
+  VISIT_METRIC,
+  type AnalyticsBreakdown,
+  type AnalyticsMetric,
+  type AnalyticsOverview,
+  type BreakdownDimension,
+  type MetricTotals,
+  type VisitType,
+} from "@/lib/analytics/types";
 
 // Appwrite Analytics REST client.
 // node-appwrite@14 has no Analytics service, so we talk to the REST API directly.
@@ -11,7 +22,8 @@ const API_KEY =
 const PROPERTY_ID = process.env.APPWRITE_ANALYTICS_PROPERTY_ID!;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://feedbackio.app";
 
-const ONE_HOUR = 3600;
+const FIVE_MINUTES = 300;
+const DAY = 24 * 60 * 60 * 1000;
 
 const headers = {
   "Content-Type": "application/json",
@@ -19,32 +31,29 @@ const headers = {
   "X-Appwrite-Key": API_KEY,
 };
 
-export type VisitType = "landing page" | "wall of fame";
+export type { VisitType };
 
 // Event names are namespaced by space id so a single analytics property can
 // serve every space: metrics are filtered with `eventName` queries.
-const EVENTS = {
+const EVENTS: Record<AnalyticsMetric, string> = {
   submit: "feedback_submit",
-  "landing page": "landing_page_visit",
-  "wall of fame": "wall_of_fame_visit",
-} as const;
-
-type EventKey = keyof typeof EVENTS;
-
-const PAGE_PATHS: Record<EventKey, string> = {
-  submit: "feedback",
-  "landing page": "landing-page",
-  "wall of fame": "wall-of-fame",
+  landing: "landing_page_visit",
+  wall: "wall_of_fame_visit",
 };
 
-function eventName(spaceId: string, event: EventKey) {
-  return `${spaceId}:${EVENTS[event]}`;
+const PAGE_PATHS: Record<AnalyticsMetric, string> = {
+  submit: "feedback",
+  landing: "landing-page",
+  wall: "wall-of-fame",
+};
+
+function eventName(spaceId: string, metric: AnalyticsMetric) {
+  return `${spaceId}:${EVENTS[metric]}`;
 }
 
-// Visits count unique visitors (matches the old per-IP dedupe),
-// submissions count every event.
-function metricFor(event: EventKey) {
-  return event === "submit" ? "events" : "visitors";
+// Visits count unique visitors, submissions count every event.
+function countFor(metric: AnalyticsMetric) {
+  return metric === "submit" ? "events" : "visitors";
 }
 
 // ---------- Tracking ----------
@@ -61,10 +70,10 @@ type AnalyticsCreationResult =
   | { status: "error"; error: string };
 
 async function createEvent(
-  event: EventKey,
+  metric: AnalyticsMetric,
   { spaceId, ip, userAgent, referrer }: TrackBody
 ): Promise<AnalyticsCreationResult> {
-  const url = new URL(`/${spaceId}/${PAGE_PATHS[event]}`, APP_URL);
+  const url = new URL(`/${spaceId}/${PAGE_PATHS[metric]}`, APP_URL);
   try {
     const res = await fetch(
       `${ENDPOINT}/analytics/properties/${PROPERTY_ID}/events`,
@@ -73,7 +82,7 @@ async function createEvent(
         headers,
         cache: "no-store",
         body: JSON.stringify({
-          name: eventName(spaceId, event),
+          name: eventName(spaceId, metric),
           url: url.toString(),
           domain: url.hostname,
           referrer: referrer || "",
@@ -101,191 +110,146 @@ export function trackFeedbackSubmit(body: TrackBody) {
 }
 
 export function trackVisit(visitType: VisitType, body: TrackBody) {
-  return createEvent(visitType, body);
+  return createEvent(VISIT_METRIC[visitType], body);
 }
 
 // ---------- Metrics ----------
 
-type Dimension = "country" | "browser" | "operatingSystem" | "eventName";
-
-interface AnalyticsMetric {
+interface MetricRow {
   value: string | null;
   date: string | null;
   visitors: number;
   events: number;
 }
 
-interface AnalyticsMetricList {
-  total: number;
-  metrics: AnalyticsMetric[];
-}
-
 interface MetricsParams {
   queries: string[];
   interval?: "1d";
-  dimensions?: Dimension[];
-  start?: string;
-  end?: string;
+  dimensions?: (BreakdownDimension | "eventName")[];
+  start: string;
+  end: string;
+  limit?: number;
 }
 
-// start/end come in as yyyy-MM-dd and cover whole days (UTC)
-function toRange(start?: string, end?: string) {
-  return {
-    ...(start ? { startAt: `${start}T00:00:00.000Z` } : {}),
-    ...(end ? { endAt: `${end}T23:59:59.999Z` } : {}),
-  };
-}
-
+// start/end are yyyy-MM-dd and cover whole days (UTC)
 async function listMetrics({
   queries,
   interval,
   dimensions = [],
   start,
   end,
-}: MetricsParams): Promise<AnalyticsMetric[]> {
-  const params = new URLSearchParams();
+  limit,
+}: MetricsParams): Promise<MetricRow[]> {
+  const params = new URLSearchParams({
+    startAt: `${start}T00:00:00.000Z`,
+    endAt: `${end}T23:59:59.999Z`,
+  });
   queries.forEach((q) => params.append("queries[]", q));
   dimensions.forEach((d) => params.append("dimensions[]", d));
   if (interval) params.set("interval", interval);
-  Object.entries(toRange(start, end)).forEach(([k, v]) => params.set(k, v));
+  if (limit) params.set("limit", String(limit));
 
   const res = await fetch(
     `${ENDPOINT}/analytics/properties/${PROPERTY_ID}/metrics?${params}`,
-    { headers, next: { revalidate: ONE_HOUR } }
+    { headers, next: { revalidate: FIVE_MINUTES } }
   );
   if (!res.ok) throw new Error(await res.text());
-  const data: AnalyticsMetricList = await res.json();
+  const data: { metrics: MetricRow[] } = await res.json();
   return data.metrics;
 }
 
-function toRecord(
-  rows: AnalyticsMetric[],
-  key: (row: AnalyticsMetric) => string,
-  metric: "visitors" | "events"
-) {
-  return rows.reduce<Record<string, number>>((acc, row) => {
-    acc[key(row)] = (acc[key(row)] || 0) + (row[metric] || 0);
-    return acc;
-  }, {});
+const toISODate = (time: number) => new Date(time).toISOString().slice(0, 10);
+
+// the window of the same length that ends the day before `start`
+function previousWindow(start: string, end: string) {
+  const s = Date.parse(start);
+  const length = Date.parse(end) - s + DAY;
+  return { start: toISODate(s - length), end: toISODate(s - DAY) };
 }
 
-type SpaceEventTotals = {
-  feedback_submit: number;
-  landing_page_visit: number;
-  wall_of_fame_visit: number;
-};
-
-export async function getSpaceEventTotals(
+async function getTotals(
   spaceId: string,
-  start?: string,
-  end?: string
-): Promise<SpaceEventTotals | null> {
-  try {
-    const rows = await listMetrics({
-      queries: [Query.startsWith("eventName", `${spaceId}:`)],
-      dimensions: ["eventName"],
-      start,
-      end,
-    });
-    const find = (event: EventKey) => {
-      const row = rows.find((r) => r.value === eventName(spaceId, event));
-      return row ? row[metricFor(event)] || 0 : 0;
-    };
-    return {
-      feedback_submit: find("submit"),
-      landing_page_visit: find("landing page"),
-      wall_of_fame_visit: find("wall of fame"),
-    };
-  } catch (error) {
-    console.error({ message: "Error fetching space metadata", error });
-    return null;
+  start: string,
+  end: string
+): Promise<MetricTotals> {
+  const rows = await listMetrics({
+    queries: [Query.startsWith("eventName", `${spaceId}:`)],
+    dimensions: ["eventName"],
+    start,
+    end,
+  });
+  const totals = {} as MetricTotals;
+  for (const metric of ANALYTICS_METRICS) {
+    const row = rows.find((r) => r.value === eventName(spaceId, metric));
+    totals[metric] = row ? row[countFor(metric)] || 0 : 0;
   }
+  return totals;
 }
 
-type AnalyticsRecord = {
-  success: boolean;
-  metadata: {
-    countries: Record<string, number>;
-    browsers: Record<string, number>;
-    os: Record<string, number>;
-  };
-};
-
-const UNKNOWN = "UNKNOWN";
-
-async function getEventData(
+async function getTimeline(
   spaceId: string,
-  event: EventKey,
-  start?: string,
-  end?: string
+  metric: AnalyticsMetric,
+  start: string,
+  end: string
 ) {
-  const queries = [Query.equal("eventName", eventName(spaceId, event))];
-  const metric = metricFor(event);
-  const breakdown = (dimension: Dimension) =>
-    listMetrics({ queries, dimensions: [dimension], start, end }).then(
-      (rows) => toRecord(rows, (r) => r.value || UNKNOWN, metric)
-    );
+  const rows = await listMetrics({
+    queries: [Query.equal("eventName", eventName(spaceId, metric))],
+    interval: "1d",
+    start,
+    end,
+  });
+  const count = countFor(metric);
+  const timeline: Record<string, number> = {};
+  for (const row of rows) {
+    if (!row.date || !row[count]) continue;
+    const day = row.date.slice(0, 10);
+    timeline[day] = (timeline[day] || 0) + row[count];
+  }
+  return timeline;
+}
 
-  const [series, countries, browsers, os] = await Promise.all([
-    listMetrics({ queries, interval: "1d", start, end }),
-    breakdown("country"),
-    breakdown("browser"),
-    breakdown("operatingSystem"),
+export async function getOverview(
+  spaceId: string,
+  start: string,
+  end: string,
+  totalFeedback: Promise<number | null>
+): Promise<AnalyticsOverview> {
+  const prev = previousWindow(start, end);
+  const [current, previous, submit, landing, wall, total] = await Promise.all([
+    getTotals(spaceId, start, end),
+    getTotals(spaceId, prev.start, prev.end),
+    getTimeline(spaceId, "submit", start, end),
+    getTimeline(spaceId, "landing", start, end),
+    getTimeline(spaceId, "wall", start, end),
+    totalFeedback,
   ]);
+  return {
+    totalFeedback: total,
+    current,
+    previous,
+    timelines: { submit, landing, wall },
+  };
+}
 
-  const timeline = toRecord(
-    series.filter((r) => r[metric] > 0),
-    (r) => (r.date || "").slice(0, 10),
-    metric
+export async function getBreakdown(
+  spaceId: string,
+  metric: AnalyticsMetric,
+  start: string,
+  end: string
+): Promise<AnalyticsBreakdown> {
+  const queries = [Query.equal("eventName", eventName(spaceId, metric))];
+  const count = countFor(metric);
+  const results = await Promise.all(
+    BREAKDOWN_DIMENSIONS.map((dimension) =>
+      listMetrics({ queries, dimensions: [dimension], start, end, limit: 50 })
+    )
   );
-
-  return { timeline, metadata: { countries, browsers, os } };
-}
-
-type VisitTypeResponse = AnalyticsRecord & {
-  visits: Record<string, number>;
-};
-
-export async function getVisitData(
-  spaceId: string,
-  visitType: VisitType,
-  start?: string,
-  end?: string
-): Promise<VisitTypeResponse | null> {
-  if (!(visitType in EVENTS)) return null;
-  try {
-    const { timeline, metadata } = await getEventData(
-      spaceId,
-      visitType,
-      start,
-      end
-    );
-    return { success: true, visits: timeline, metadata };
-  } catch (error) {
-    console.error({ message: "Error fetching visit analytics", error });
-    return null;
-  }
-}
-
-type FeedbackSubmissionResponse = AnalyticsRecord & {
-  feedbacks: Record<string, number>;
-};
-
-export async function getFeedbackSubmissionData(
-  spaceId: string,
-  start?: string,
-  end?: string
-): Promise<FeedbackSubmissionResponse | null> {
-  try {
-    const { timeline, metadata } = await getEventData(
-      spaceId,
-      "submit",
-      start,
-      end
-    );
-    return { success: true, feedbacks: timeline, metadata };
-  } catch (error) {
-    console.error({ message: "Error fetching feedback analytics", error });
-    return null;
-  }
+  const breakdown = {} as AnalyticsBreakdown;
+  BREAKDOWN_DIMENSIONS.forEach((dimension, i) => {
+    breakdown[dimension] = results[i]
+      .map((row) => ({ name: row.value || "", value: row[count] || 0 }))
+      .filter((row) => row.value > 0)
+      .sort((a, b) => b.value - a.value);
+  });
+  return breakdown;
 }
